@@ -299,6 +299,14 @@ function draw({ eq, w, h }: SymbolProps): ReactElement {
           <Lead x={20} y1={58} y2={80} />
         </g>
       );
+    case 'line':
+      // Overhead line: the conductor with two pole crossarms.
+      return (
+        <g>
+          <Lead x={20} y1={0} y2={120} />
+          <path d="M8 40h24M8 80h24M12 40l8 -8l8 8M12 80l8 -8l8 8" strokeWidth={1.5} />
+        </g>
+      );
     case 'ground':
       return <Ground x={20} y={0} />;
     case 'tie': {

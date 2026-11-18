@@ -22,6 +22,7 @@ export type EquipmentType =
   | 'bus' | 'lineup' | 'mcc' | 'panelboard'
   | 'ct' | 'vt' | 'relay' | 'meter' | 'arrester'
   | 'motor' | 'load' | 'capacitor' | 'reactor'
+  | 'line'
   | 'ground' | 'tie';
 
 export type AnnotationKind = 'note' | 'cloud';
@@ -51,6 +52,8 @@ export interface Equipment {
   labelFields: string[];
   /** Bus only: dynamic taps. */
   taps?: Terminal[];
+  /** Prop keys whose value is a library typical (filled by the study tools), not entered by the user. */
+  typical?: string[];
 }
 
 export type ConnectionKind = 'cable' | 'control';
@@ -65,6 +68,8 @@ export interface Connection {
   to: TerminalRef;
   props: Record<string, PropValue>;
   custom: CustomProp[];
+  /** Prop keys whose value is a library typical, not entered by the user. */
+  typical?: string[];
 }
 
 export interface Annotation {
@@ -108,6 +113,50 @@ export interface Layout {
   routes: Record<Id, RouteLayout>;
 }
 
+// ---------- study (PSS/E / ANDES export) settings and imported results
+
+export interface StudySettings {
+  /** System MVA base for per-unit conversion (PSS/E SBASE). */
+  baseMva: number;
+  /** System frequency, Hz (PSS/E BASFRQ). */
+  freqHz: number;
+  /** RAW revision written. Fixed at 33 for now. */
+  rawVersion: 33;
+  /** Cables shorter than this (ft) are merged as zero-impedance ties. 0 disables. */
+  collapseFt: number;
+  /** Cables with |Z| below this (ohms) are merged as zero-impedance ties. 0 disables. */
+  collapseOhm: number;
+  /**
+   * Sticky PSS/E bus numbers for study buses that have no drawn Bus object, keyed by an
+   * anchor terminal `equipmentId:terminalId`. Drawn buses keep theirs in `design.busNum`.
+   */
+  busNumbers: Record<string, number>;
+}
+
+/** One object's read-only study results (from an imported power-flow solution). */
+export interface ObjectResult {
+  /** Bus voltage magnitude (pu) and angle (deg). */
+  vm?: number;
+  va?: number;
+  /** Branch flows at the from / to ends, MW and Mvar. */
+  pFrom?: number;
+  qFrom?: number;
+  pTo?: number;
+  qTo?: number;
+}
+
+export interface StudyResults {
+  /** ISO timestamp of the import. */
+  at: string;
+  /** e.g. 'ANDES 1.9.x power flow'. */
+  source: string;
+  converged: boolean;
+  /** By PSS/E bus number. */
+  buses: Record<string, { vm: number; va: number }>;
+  /** By object id (buses, branches). */
+  objects: Record<Id, ObjectResult>;
+}
+
 export interface ProjectDoc {
   schemaVersion: number;
   id: Id;
@@ -119,4 +168,8 @@ export interface ProjectDoc {
   connections: Record<Id, Connection>;
   annotations: Record<Id, Annotation>;
   layout: Layout;
+  /** Study (power flow / short circuit / dynamics export) settings. Schema 2+. */
+  study: StudySettings;
+  /** Last imported power-flow results, or null. Schema 2+. */
+  studyResults: StudyResults | null;
 }

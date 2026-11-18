@@ -2,9 +2,13 @@
 
 import { CATALOG, SWITCHING, type TerminalDef, typeDef } from './catalog';
 import { schemaFor, CABLE_SCHEMA, CONTROL_SCHEMA, type FieldDef } from './schemas';
-import type { Connection, Equipment, EquipmentType, Id, Phase, ProjectDoc, PropValue, Terminal } from './types';
+import type { Connection, Equipment, EquipmentType, Id, Phase, ProjectDoc, PropValue, StudySettings, Terminal } from './types';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
+
+export function defaultStudySettings(): StudySettings {
+  return { baseMva: 100, freqHz: 60, rawVersion: 33, collapseFt: 10, collapseOhm: 0, busNumbers: {} };
+}
 
 export function newId(): Id {
   return crypto.randomUUID();
@@ -28,6 +32,8 @@ export function createProject(name = 'Untitled project'): ProjectDoc {
     connections: {},
     annotations: {},
     layout: { nodes: {}, buses: {}, routes: {} },
+    study: defaultStudySettings(),
+    studyResults: null,
   };
 }
 
@@ -121,7 +127,25 @@ export function isEmpty(v: PropValue | undefined): boolean {
   return v === undefined || v === null || v === '' || (typeof v === 'number' && Number.isNaN(v));
 }
 
+/** Is a field shown for this object (conditional `showIf`)? */
+export function fieldVisible(f: FieldDef, props: Record<string, PropValue>): boolean {
+  if (!f.showIf) return true;
+  const v = props[f.showIf.key] ?? f.showIf.fallback ?? null;
+  const want = f.showIf.equals;
+  return Array.isArray(want) ? want.includes(v as PropValue) : v === want;
+}
+
 /** Required fields for `phase` that are empty. */
 export function missingRequired(o: Equipment | Connection, phase: Phase): FieldDef[] {
-  return schemaForObject(o).filter((f) => f.requiredIn?.includes(phase) && isEmpty(o.props[f.key]));
+  return schemaForObject(o).filter((f) => f.requiredIn?.includes(phase) && fieldVisible(f, o.props) && isEmpty(o.props[f.key]));
+}
+
+/** Study fields (power flow / short circuit / dynamics) that a study needs and are still empty. */
+export function missingStudy(o: Equipment | Connection, study: 'pf' | 'sc' | 'dyn'): FieldDef[] {
+  return schemaForObject(o).filter((f) => f.study === study && f.need && fieldVisible(f, o.props) && isEmpty(o.props[f.key]));
+}
+
+/** True when the value of `key` came from a typical-value library rather than the user. */
+export function isTypical(o: Equipment | Connection, key: string): boolean {
+  return o.typical?.includes(key) ?? false;
 }

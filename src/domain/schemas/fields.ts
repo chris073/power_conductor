@@ -1,4 +1,4 @@
-import type { Phase } from '../types';
+import type { Phase, PropValue } from '../types';
 
 export type FieldType = 'text' | 'number' | 'enum' | 'bool' | 'date' | 'textarea';
 export type UnitFamily = 'voltage';
@@ -18,7 +18,18 @@ export interface FieldDef {
   /** Phases in which this field must be filled ("missing required" badge). */
   requiredIn?: Phase[];
   help?: string;
+  /** Show the field only when another prop equals a value (or one of several). */
+  showIf?: { key: string; equals: PropValue | PropValue[]; fallback?: PropValue };
+  /** Study the field feeds: power flow, short circuit or dynamics. Grouped as "Model: …" in the inspector. */
+  study?: StudyTag;
+  /** The study needs this value (it counts on the readiness badge; a library typical can fill it). */
+  need?: boolean;
+  /** Default used by the study export when the field is empty (marked "typical" when applied). */
+  dflt?: PropValue;
 }
+
+export type StudyTag = 'pf' | 'sc' | 'dyn';
+export const STUDY_LABEL: Record<StudyTag, string> = { pf: 'Power flow', sc: 'Short circuit', dyn: 'Dynamics' };
 
 // Small builders keep the schema files readable.
 type Opt = Partial<Omit<FieldDef, 'key' | 'label' | 'phase' | 'type'>>;

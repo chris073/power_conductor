@@ -37,6 +37,7 @@ export function validateDoc(d: unknown): asserts d is ProjectDoc {
   for (const k of ['nodes', 'buses', 'routes'] as const) {
     if (!isObj(layout[k])) throw new Error(`Project layout is missing "${k}".`);
   }
+  if (!isObj(d.study) || typeof d.study.baseMva !== 'number') throw new Error('Project is missing its study settings.');
 }
 
 /**

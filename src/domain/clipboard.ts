@@ -52,7 +52,10 @@ export function pasteFragment(doc: ProjectDoc, frag: Fragment, sheetId: Id, dx: 
     map.set(e.id, id);
     const tag = nextTag({ equipment, connections }, CATALOG[e.type].tagPrefix, taken);
     taken.add(tag);
-    equipment[id] = { ...structuredClone(e), id, sheetId, tag };
+    const copy = { ...structuredClone(e), id, sheetId, tag };
+    // PSS/E bus numbers must stay unique: a pasted bus gets a new one on the next export.
+    delete copy.props['design.busNum'];
+    equipment[id] = copy;
     const n = frag.nodes[e.id];
     if (n) nodes[id] = shift(n);
     const b = frag.buses[e.id];

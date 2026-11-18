@@ -1,0 +1,22 @@
+{
+  "format": "conductor-project",
+  "schemaVersion": 1,
+  "project": {
+    "schemaVersion": 1,
+    "id": "4f1d1e1a-0000-4000-8000-000000000001",
+    "name": "Schema 1 fixture",
+    "createdAt": "2026-11-17T10:00:00.000Z",
+    "updatedAt": "2026-11-17T10:00:00.000Z",
+    "sheets": [{ "id": "sheet-1", "name": "Sheet 1" }],
+    "equipment": {
+      "t1": { "id": "t1", "type": "xfmr2", "sheetId": "sheet-1", "tag": "T1", "props": { "concept.kva": 2500, "design.kvRatio": "13.8-0.48 kV", "design.z": 5.75, "design.hvWinding": "Δ", "design.lvWinding": "Yg" }, "custom": [], "labelFields": ["concept.kva", "design.kvRatio"] },
+      "t2": { "id": "t2", "type": "xfmr2", "sheetId": "sheet-1", "tag": "T2", "props": { "concept.kva": 1000, "design.kvRatio": "4160/480 V" }, "custom": [], "labelFields": ["concept.kva"] },
+      "t3": { "id": "t3", "type": "xfmr3", "sheetId": "sheet-1", "tag": "T3", "props": { "design.kvRatio": "138/34.5/13.8" }, "custom": [], "labelFields": ["design.kvRatio"] },
+      "t4": { "id": "t4", "type": "xfmr2", "sheetId": "sheet-1", "tag": "T4", "props": { "design.kvRatio": "see vendor data" }, "custom": [], "labelFields": [] },
+      "b1": { "id": "b1", "type": "bus", "sheetId": "sheet-1", "tag": "BUS-1", "props": { "concept.kv": 13.8 }, "custom": [], "labelFields": ["design.kv"], "taps": [] }
+    },
+    "connections": {},
+    "annotations": {},
+    "layout": { "nodes": {}, "buses": { "b1": { "taps": {} } }, "routes": {} }
+  }
+}

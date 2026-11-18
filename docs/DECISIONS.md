@@ -94,3 +94,36 @@ Dropping a connection anywhere on a bus creates a tap at the snapped offset, and
 Re-run the script after canvas changes. If a larger diagram is needed later, the next steps would be: cull at fit with a level-of-detail mode (draw symbols as boxes below about 0.3 zoom), and incremental topology.
 
 **Caveat.** Headless Chrome on one Windows machine. Real-GPU numbers in a visible window may differ slightly.
+
+## D-011 Study export: PSS/E and ANDES ready (2026-11-17)
+
+**Approved by the user** (this counts as the plan approval CLAUDE.md asks for before domain-model and file-format changes).
+
+**Decision.** The SLD stays node-breaker. A plain-TypeScript study layer in `src/domain/study/` reduces it to a bus-branch case and writes PSS/E RAW v33, SEQ and DYR. ANDES reads the RAW and DYR for power flow and time-domain checks.
+
+1. **Reduction (`study/reduce.ts`).** It reuses the topology union-find (`electricalNodes`), with one new option: connections that become branches are not joined. Closed breakers, disconnects, load-break switches, fuses, reclosers and contactors, CTs, buses, MCCs, panelboards and same-name ties all merge into one study bus. Open devices split buses. A cable with a length becomes a branch. A cable with no length, or shorter than the project's collapse threshold (default 10 ft), or with |Z| below the ohm threshold (default off), merges as a zero-impedance tie. Nodes that hold only switching devices, VTs, arresters or grounds are dropped. DC nodes (PV/BESS and the inverter DC side) are not study buses. A PV array or BESS wired to an inverter is exported as a generator at the inverter's AC bus, using the source's model data. Relays, CTs, VTs, meters and arresters are never exported.
+2. **Bus identity.** A study bus that contains a drawn Bus object keeps its PSS/E number in that bus's `design.busNum` (user-editable). When closed ties merge several drawn buses, the lowest number wins. A study bus with no drawn bus keeps its number in `doc.study.busNumbers`, keyed by an anchor terminal `equipmentId:terminalId`. The anchor is picked deterministically: sources, then transformer and line terminals, then loads, each by equipment ID. Numbers are assigned on export (next free number) and written back to the project, so they stay the same across exports. The name is the bus tag (or anchor tag) cut to 12 characters. IDE is 3 for the island swing, 2 for buses with an in-service machine, 1 otherwise, and 4 for buses in an island with no source.
+3. **Base kV (`study/basekv.ts`).** Seeds, strongest first: Bus `design.baseKv`, then Bus nominal `concept.kv`, then utility/generator/wind kV, then MCC/panelboard rated kV, then transformer winding kV. Seeds spread through zero-ratio branches (cables, lines, series reactors). Two different strong seeds in one voltage zone are a conflict. A transformer winding kV that differs from its bus base kV by more than 10 % is flagged (smaller differences are legal off-nominal ratios).
+4. **Per unit (`study/perunit.ts`).** The system base is a project setting (`doc.study.baseMva`, default 100 MVA). Transformer %Z on the impedance base (default: the kVA rating) becomes R, X on the system base: Z = %Z/100 · (Sbase/Snom) · (V_LV,rated / V_LV,base)², split by X/R. RAW uses CZ = 1 and CW = 2 for two-winding units (winding kV), and CW = 1 for three-winding units (see D-013). Cables use Ω/1000 ft (NEC Table 9 units) and lengths in ft, which matches the existing `concept.lengthFt`. Overhead lines use Ω/mi and miles. Z_base = kV²/Sbase, B_pu = B_S · Z_base.
+5. **Readiness (`study/readiness.ts`).** It reports, each with an object ID: islands with no swing, missing base kV, base kV conflicts, transformer kV not matching its buses, missing study values, zero or negative impedance, duplicate bus numbers, and every typical value used.
+6. **Writers.** `raw.ts` (v33), `seq.ts`, `dyr.ts`. Formats follow the PSS/E 33 POM. Where ANDES reads a record differently, the writer stays inside valid v33 and the difference is noted in D-013.
+
+**Schema.** `FieldDef` gains `showIf` (conditional fields, e.g. GENROU parameters only when the model is GENROU), `study` ('pf' | 'sc' | 'dyn'), `need` (counts on the readiness badge) and `dflt` (the typical default). Study fields live in the Design phase. The inspector shows them as "Model: Power flow / Short circuit / Dynamics" groups, each with a readiness badge. Dynamic model parameters are generated from the model library (`study/libraries/dynamics.ts`) as `design.dyn.<MODEL>.<PARAM>` and fold per model.
+
+**Typical values.** `study/libraries/` holds conductor impedances (NEC Chapter 9 Table 9 for cables; ACSR data with Carson's equations for overhead lines), transformer X/R and %Z by MVA (IEEE C37.010 / IEEE 399 typical curves), and default parameter sets for GENCLS, GENROU, GENSAL, SEXS, IEEET1, ESST1A, TGOV1, GAST, IEEEG1, REGCA1, REECA1, REECC1, REPCA1, WTDTA1/WTARA1/WTPTA1/WTTQA1 and CIM5BL. The export never needs every value to be entered. Empty values are filled from the libraries and schema defaults, listed in the readiness report, and can be written back with **Apply typicals**. That marks them in `Equipment.typical` / `Connection.typical` (the keys whose value is a typical). Editing a value removes its mark.
+
+**New equipment.** `line` (overhead line): two terminals, conductor, phase spacing, length, R/X/B per mile, ratings A/B/C, R0/X0/B0. It exports as a non-transformer branch.
+
+**Alternatives.**
+- Export node-breaker RAW v35 directly. Rejected for now: ANDES reads v33/v34 bus-branch only. It is on the roadmap.
+- Store all bus numbers in one doc-level map. Rejected: a drawn bus should carry its own number in the inspector, where people expect it.
+- Keep `kvRatio` text and parse it at export. Rejected: numbers are needed for base-kV propagation and per-unit math, and silent parsing hides errors.
+
+## D-012 Project schema 2 (2026-11-17)
+
+`SCHEMA_VERSION` 1 → 2, with migration `migrations[1]`:
+- `ProjectDoc.study` (StudySettings: baseMva 100, freqHz 60, rawVersion 33, collapseFt 10, collapseOhm 0, busNumbers {}) and `ProjectDoc.studyResults` (null) are added.
+- Transformer `design.kvRatio` text becomes numeric `design.hvKv` / `design.lvKv` (and `design.tvKv` on 3-winding units). Values of 1000 or more, or a trailing "V", are read as volts. Text that cannot be parsed is kept as a custom property "Voltage ratio (old)". Labels that showed the ratio now show `design.hvKv`.
+- `Equipment.typical` / `Connection.typical` are optional and need no migration.
+
+Test: `src/domain/__tests__/migration-v1.test.ts` with the fixture `fixtures/v1-project.json`. Pasting a bus drops its `design.busNum`, so numbers stay unique.

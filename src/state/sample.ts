@@ -44,8 +44,8 @@ export function buildSampleProject(): ProjectDoc {
   const mv = add('bus', 'MV-BUS', 200, 380, { 'concept.kv': 13.8, 'design.kv': 15, 'design.ratedA': 1200 }, { w: 480 });
   const f1 = add('breaker', '52-T1', 260, 440, { 'design.kv': 15, 'design.ratedA': 600 });
   const f2 = add('breaker', '52-T2', 580, 440, { 'design.kv': 15, 'design.ratedA': 600 });
-  const t1 = add('xfmr2', 'T1', 240, 560, { 'concept.kva': 2500, 'design.kvRatio': '13.8-0.48 kV', 'design.z': 5.75 });
-  const t2 = add('xfmr2', 'T2', 560, 560, { 'concept.kva': 2500, 'design.kvRatio': '13.8-0.48 kV' });
+  const t1 = add('xfmr2', 'T1', 240, 560, { 'concept.kva': 2500, 'design.hvKv': 13.8, 'design.lvKv': 0.48, 'design.z': 5.75 });
+  const t2 = add('xfmr2', 'T2', 560, 560, { 'concept.kva': 2500, 'design.hvKv': 13.8, 'design.lvKv': 0.48 });
   add('lineup', 'SWGR-1', 140, 700, { 'design.kv': 0.48, 'design.ratedA': 4000 }, { w: 600, h: 360 });
   const l1 = add('breaker', '52-L1', 260, 720, { 'design.mounting': 'Draw-out', 'design.kv': 0.48, 'design.ratedA': 3200 });
   const l2 = add('breaker', '52-L2', 580, 720, { 'design.mounting': 'Draw-out', 'design.kv': 0.48, 'design.ratedA': 3200 });

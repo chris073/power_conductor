@@ -153,3 +153,17 @@
 .eq.tr-boundary .eq-hit, .eq.op-boundary .eq-hit { fill: color-mix(in srgb, var(--boundary) 14%, transparent); stroke: var(--boundary); stroke-width: 1.5; stroke-dasharray: none; }
 .eq.op-dead, .bus.op-dead, .eq.tr-dim, .bus.tr-dim, .lineup.tr-dim { opacity: var(--dim); }
 .cable.op-dead.react-flow__edge-path, .cable.tr-dim.react-flow__edge-path { opacity: var(--dim); }
+
+/* ---------- study model groups (inspector) */
+.model-group { margin-top: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.model-group > summary { cursor: pointer; padding: 6px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-2); font-weight: 600; display: flex; gap: 6px; align-items: center; }
+.model-group > .fields { padding: 4px 10px 10px; }
+.model-params { margin: 0 10px 8px; border-top: 1px dashed var(--border); }
+.model-params > summary { cursor: pointer; padding: 6px 0; font-size: 12px; color: var(--ink-2); }
+.model-params > .fields { padding-bottom: 6px; }
+.model-ok { font-style: normal; color: var(--good); font-size: 12px; }
+.field .typ { font-style: normal; font-weight: 600; margin-left: 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--warn-ink); background: var(--warn-soft); border-radius: 4px; padding: 0 4px; }
+.field .req.study { color: var(--ink-3); }
+.results-grid { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; }
+.results-grid dt { color: var(--ink-3); }
+.results-grid dd { margin: 0; font-variant-numeric: tabular-nums; }

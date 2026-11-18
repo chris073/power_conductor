@@ -16,7 +16,7 @@ const ITEMS: Item[] = [
   { id: 'cloud', label: 'Revision cloud', category: 'Annotations', keywords: 'revision cloud markup' },
 ];
 
-const ORDER: (Category | 'Annotations')[] = ['Sources', 'Transformers', 'Switching', 'Buses & gear', 'Protection & metering', 'Loads', 'Other', 'Annotations'];
+const ORDER: (Category | 'Annotations')[] = ['Sources', 'Transformers', 'Lines', 'Switching', 'Buses & gear', 'Protection & metering', 'Loads', 'Other', 'Annotations'];
 
 const Preview = memo(function Preview({ item }: { item: Item }) {
   if (!item.type) {

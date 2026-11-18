@@ -2,6 +2,19 @@
 
 All notable changes to Conductor. Versions follow semver; the in-app **Revisions** page shows this file.
 
+## [0.2.0] - 2026-11-17
+
+PSS/E and ANDES ready: modeling data on every device, and a study-case export (D-011).
+
+### Added
+- **Modeling fields** on sources, transformers, cables, loads, motors, capacitors, reactors and buses, for power flow, short circuit and dynamics. They live in the Design phase and the inspector groups them as **Model: Power flow / Short circuit / Dynamics**, each with a readiness badge. Fields can be conditional (GENROU parameters show only when the model is GENROU). Values that came from a typical-value library are marked **typical**; editing one makes it yours.
+- **Overhead line** equipment (palette › Lines): conductor, phase spacing, length, R/X/B per mile, ratings and zero-sequence data. It exports as a branch.
+- **Typical-value libraries**: cable impedance by size and material (NEC Table 9), ACSR line constants from conductor and spacing (Carson), transformer X/R and %Z by MVA, and default parameter sets for GENROU, GENSAL, GENCLS, SEXS, ESST1A, IEEET1, TGOV1, GAST, IEEEG1, the WECC REGCA1/REECA1/REECC1/REPCA1 set, the wind WTDTA1/WTARA1/WTPTA1/WTTQA1 models and CIM5BL.
+
+### Changed
+- Project files move to schema 2 (D-012). Transformer voltage ratio text ("13.8-0.48 kV") becomes numeric HV/LV (and tertiary) winding voltages; older files migrate automatically.
+- Pasting a bus drops its PSS/E bus number so numbers stay unique.
+
 ## [0.1.1] - 2026-11-17
 
 ### Added

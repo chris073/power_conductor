@@ -31,7 +31,7 @@ export interface TerminalDef {
  */
 export type Behavior = 'source' | 'switch' | 'bus' | 'through' | 'passive' | 'sink' | 'tie' | 'signal' | 'container';
 
-export type Category = 'Sources' | 'Transformers' | 'Switching' | 'Buses & gear' | 'Protection & metering' | 'Loads' | 'Other';
+export type Category = 'Sources' | 'Transformers' | 'Lines' | 'Switching' | 'Buses & gear' | 'Protection & metering' | 'Loads' | 'Other';
 
 export interface TypeDef {
   type: EquipmentType;
@@ -61,8 +61,10 @@ export const CATALOG: Record<EquipmentType, TypeDef> = {
   inverter: { type: 'inverter', label: 'Inverter / PCS', category: 'Sources', behavior: 'passive', tagPrefix: 'INV', w: 80, h: 80, terminals: [P('DC', 40, 0, 'up', 'DC'), P('AC', 40, 80, 'down', 'AC')], keywords: 'pcs converter', defaultLabel: ['concept.kw'] },
   wind: { type: 'wind', label: 'Wind turbine', category: 'Sources', behavior: 'source', tagPrefix: 'WTG', w: 80, h: 80, terminals: [P('T', 40, 80, 'down', 'Out')], keywords: 'wtg turbine', defaultLabel: ['concept.kw'] },
 
-  xfmr2: { type: 'xfmr2', label: 'Transformer, 2-winding', category: 'Transformers', behavior: 'passive', tagPrefix: 'T', w: 80, h: 120, terminals: [P('H1', 40, 0, 'up'), P('X1', 40, 120, 'down')], keywords: 'xfmr tx power transformer', defaultLabel: ['concept.kva', 'design.kvRatio'] },
-  xfmr3: { type: 'xfmr3', label: 'Transformer, 3-winding', category: 'Transformers', behavior: 'passive', tagPrefix: 'T', w: 120, h: 120, terminals: [P('H1', 60, 0, 'up'), P('X1', 40, 120, 'down'), P('Y1', 80, 120, 'down')], keywords: 'xfmr tertiary three winding', defaultLabel: ['concept.kva', 'design.kvRatio'] },
+  xfmr2: { type: 'xfmr2', label: 'Transformer, 2-winding', category: 'Transformers', behavior: 'passive', tagPrefix: 'T', w: 80, h: 120, terminals: [P('H1', 40, 0, 'up'), P('X1', 40, 120, 'down')], keywords: 'xfmr tx power transformer', defaultLabel: ['concept.kva', 'design.hvKv'] },
+  xfmr3: { type: 'xfmr3', label: 'Transformer, 3-winding', category: 'Transformers', behavior: 'passive', tagPrefix: 'T', w: 120, h: 120, terminals: [P('H1', 60, 0, 'up'), P('X1', 40, 120, 'down'), P('Y1', 80, 120, 'down')], keywords: 'xfmr tertiary three winding', defaultLabel: ['concept.kva', 'design.hvKv'] },
+
+  line: { type: 'line', label: 'Overhead line', category: 'Lines', behavior: 'passive', tagPrefix: 'OHL', w: 40, h: 120, terminals: [P('1', 20, 0, 'up', 'From'), P('2', 20, 120, 'down', 'To')], keywords: 'overhead line transmission distribution ohl conductor acsr', defaultLabel: ['design.conductor', 'design.lengthMi'] },
 
   breaker: { type: 'breaker', label: 'Circuit breaker', category: 'Switching', behavior: 'switch', tagPrefix: 'CB', w: 40, h: 80, terminals: inline(), keywords: '52 cb drawout fixed', defaultLabel: ['design.frameA', 'design.tripA'] },
   disconnect: { type: 'disconnect', label: 'Disconnect switch', category: 'Switching', behavior: 'switch', tagPrefix: 'DS', w: 40, h: 80, terminals: inline(), keywords: '89 isolator', defaultLabel: ['design.ratedA'] },

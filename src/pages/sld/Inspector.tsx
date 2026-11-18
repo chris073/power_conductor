@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import { CATALOG } from '../../domain/catalog';
-import { missingRequired, newId, schemaForObject, terminalsOf } from '../../domain/model';
-import type { FieldDef } from '../../domain/schemas';
+import { fieldVisible, isTypical, missingRequired, missingStudy, newId, schemaForObject, terminalsOf } from '../../domain/model';
+import { STUDY_LABEL, type FieldDef, type StudyTag } from '../../domain/schemas';
 import { connectionsOf } from '../../domain/topology';
 import { PHASES, PHASE_LABEL, type Annotation, type Connection, type CustomProp, type Equipment, type Id, type Phase, type PropValue } from '../../domain/types';
 import { displayUnit, fromDisplay, toDisplay } from '../../domain/units';
@@ -49,7 +49,7 @@ function CommitArea({ value, onCommit }: { value: string; onCommit: (v: string) 
   return <textarea className="input" rows={3} value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={() => { if (draft !== value) onCommit(draft); }} />;
 }
 
-function FieldEditor({ id, f, value, missing }: { id: Id; f: FieldDef; value: PropValue | undefined; missing: boolean }) {
+function FieldEditor({ id, f, value, missing, typical }: { id: Id; f: FieldDef; value: PropValue | undefined; missing: boolean; typical?: boolean }) {
   const vu = useSettings((s) => s.voltageUnit);
   const set = (v: PropValue) => useProject.getState().setProp(id, f.key, v);
   const unit = displayUnit(f, vu);
@@ -71,6 +71,7 @@ function FieldEditor({ id, f, value, missing }: { id: Id; f: FieldDef; value: Pr
       control = (
         <CommitInput
           type="number"
+          placeholder={typeof f.dflt === 'number' ? `typical ${f.dflt}` : undefined}
           value={shown === undefined || shown === null ? '' : String(shown)}
           onCommit={(v) => {
             if (v.trim() === '') return set(null);
@@ -95,6 +96,8 @@ function FieldEditor({ id, f, value, missing }: { id: Id; f: FieldDef; value: Pr
         {f.label}
         {unit && <em className="unit"> ({unit})</em>}
         {f.requiredIn?.length ? <em className="req" title={`Required in: ${f.requiredIn.map((p) => PHASE_LABEL[p]).join(', ')}`}> *</em> : null}
+        {f.need && !f.requiredIn?.length ? <em className="req study" title={`Needed for ${STUDY_LABEL[f.study ?? 'pf']} (a typical value can fill it)`}> °</em> : null}
+        {typical && <em className="typ" title="Typical value from a library, filled by the study tools. Edit it to enter your own.">typical</em>}
       </span>
       {control}
       {f.help && <small>{f.help}</small>}
@@ -134,8 +137,10 @@ function PhaseTabs({ obj }: { obj: Equipment | Connection }) {
   const [tab, setTab] = useState<Phase>(() => initial(lens));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setTab(initial(lens)), [lens]);
-  const shown = fields.filter((f) => f.phase === tab);
+  const shown = fields.filter((f) => f.phase === tab && fieldVisible(f, obj.props));
   const missing = new Set(missingRequired(obj, tab).map((f) => f.key));
+  const general = shown.filter((f) => !f.study);
+  const editor = (f: FieldDef) => <FieldEditor key={f.key} id={obj.id} f={f} value={obj.props[f.key]} missing={missing.has(f.key)} typical={isTypical(obj, f.key)} />;
   return (
     <section className="insp-section">
       <div className="tabs" role="tablist">
@@ -151,9 +156,44 @@ function PhaseTabs({ obj }: { obj: Equipment | Connection }) {
         })}
       </div>
       <div className="fields">
-        {shown.length ? shown.map((f) => <FieldEditor key={f.key} id={obj.id} f={f} value={obj.props[f.key]} missing={missing.has(f.key)} />) : <p className="muted small">No {PHASE_LABEL[tab]} fields for this type.</p>}
+        {general.map(editor)}
+        {!shown.length && <p className="muted small">No {PHASE_LABEL[tab]} fields for this type.</p>}
       </div>
+      {(['pf', 'sc', 'dyn'] as StudyTag[]).map((tag) => {
+        const group = shown.filter((f) => f.study === tag);
+        if (!group.length) return null;
+        return <ModelGroup key={tag} obj={obj} tag={tag} fields={group} editor={editor} />;
+      })}
     </section>
+  );
+}
+
+/** "Model: Power flow / Short circuit / Dynamics" group with a readiness badge. Dynamic model parameters fold per model. */
+function ModelGroup({ obj, tag, fields, editor }: { obj: Equipment | Connection; tag: StudyTag; fields: FieldDef[]; editor: (f: FieldDef) => React.ReactNode }) {
+  const miss = missingStudy(obj, tag).length;
+  const plain = fields.filter((f) => !f.key.startsWith('design.dyn.'));
+  const byModel = new Map<string, FieldDef[]>();
+  for (const f of fields) {
+    const m = /^design\.dyn\.([^.]+)\./.exec(f.key);
+    if (!m) continue;
+    const list = byModel.get(m[1]!) ?? [];
+    list.push(f);
+    byModel.set(m[1]!, list);
+  }
+  return (
+    <details className="model-group" open={tag === 'pf'}>
+      <summary>
+        Model: {STUDY_LABEL[tag]}
+        {miss > 0 ? <i className="tab-miss" title={`${miss} value(s) the ${STUDY_LABEL[tag].toLowerCase()} study needs are empty (typicals can fill them on the Study page)`}>{miss}</i> : <i className="model-ok" title="Ready">✓</i>}
+      </summary>
+      <div className="fields">{plain.map(editor)}</div>
+      {[...byModel].map(([model, list]) => (
+        <details key={model} className="model-params">
+          <summary>{model} parameters <span className="muted small">({list.length})</span></summary>
+          <div className="fields">{list.map(editor)}</div>
+        </details>
+      ))}
+    </details>
   );
 }
 

@@ -6,7 +6,7 @@ import { temporal } from 'zundo';
 import { CATALOG } from '../domain/catalog';
 import { copyFragment, pasteFragment, type Fragment } from '../domain/clipboard';
 import { createConnection, createEquipment, createProject, newId, nowIso } from '../domain/model';
-import type { AnnotationKind, CustomProp, EquipmentType, Id, NodeLayout, ProjectDoc, PropValue, RouteLayout, TerminalRef } from '../domain/types';
+import type { AnnotationKind, CustomProp, EquipmentType, Id, NodeLayout, ProjectDoc, PropValue, RouteLayout, StudySettings, TerminalRef } from '../domain/types';
 import { DEFAULT_BUS_LENGTH, isBusVertical, rotateLayout, snap } from '../layout/geometry';
 
 interface ProjectState {
@@ -30,6 +30,9 @@ interface ProjectState {
   resizeBus: (busId: Id, x: number, y: number, length: number) => void;
   resizeBox: (id: Id, x: number, y: number, w: number, h: number) => void;
   setProp: (id: Id, key: string, value: PropValue) => void;
+  setStudy: (patch: Partial<StudySettings>) => void;
+  /** Replace the document with a derived one (study tools: apply typicals, assign bus numbers, import results). One undo step. */
+  replaceDoc: (next: ProjectDoc) => void;
   setTag: (id: Id, tag: string) => void;
   toggleState: (id: Id) => void;
   setLabelFields: (id: Id, keys: string[]) => void;
@@ -248,12 +251,21 @@ export const useProject = create<ProjectState>()(
           }),
         setProp: (id, key, value) =>
           mutate((d) => {
+            // A value the user types is "entered": it drops the "typical" mark.
+            const untypical = <T extends { typical?: string[] }>(o: T): T => {
+              if (!o.typical?.includes(key)) return o;
+              const typical = o.typical.filter((k) => k !== key);
+              const { typical: _t, ...rest } = o;
+              return (typical.length ? { ...rest, typical } : rest) as T;
+            };
             const e = d.equipment[id];
-            if (e) return { ...d, equipment: { ...d.equipment, [id]: { ...e, props: { ...e.props, [key]: value } } } };
+            if (e) return { ...d, equipment: { ...d.equipment, [id]: untypical({ ...e, props: { ...e.props, [key]: value } }) } };
             const c = d.connections[id];
-            if (c) return { ...d, connections: { ...d.connections, [id]: { ...c, props: { ...c.props, [key]: value } } } };
+            if (c) return { ...d, connections: { ...d.connections, [id]: untypical({ ...c, props: { ...c.props, [key]: value } }) } };
             return d;
           }),
+        setStudy: (patch) => mutate((d) => ({ ...d, study: { ...d.study, ...patch } })),
+        replaceDoc: (next) => mutate(() => next),
         setTag: (id, tag) =>
           mutate((d) => {
             const e = d.equipment[id];
