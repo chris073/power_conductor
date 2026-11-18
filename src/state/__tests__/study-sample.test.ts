@@ -1,6 +1,6 @@
 // Golden snippets: the sample substation exported as PSS/E RAW v33.
 import { describe, expect, it } from 'vitest';
-import { buildStudyCase, persistBusNumbers, writeRaw, writeSeq } from '../../domain/study';
+import { buildStudyCase, dyrRecords, persistBusNumbers, writeDyr, writeRaw, writeSeq } from '../../domain/study';
 import { buildSampleProject } from '../sample';
 
 function sampleCase() {
@@ -58,5 +58,18 @@ describe('sample substation study export', () => {
     expect(seq).toContain("6,3,0,'1 ',1,1,3,0.000000,0.0,0.325269,2.276884,0.000000,0.0,0.0,0.0,0.0,0.0");
     expect(seq.filter((l) => l.startsWith('0 / END OF'))).toHaveLength(8);
     expect(seq.at(-2)).toBe('Q');
+  });
+  it('writes one DYR record per device and model, in PSS/E order', () => {
+    expect(dyrRecords(sc).map((r) => `${r.bus} ${r.model}`)).toEqual(['7 GENCLS', '1 GENROU', '1 SEXS', '1 TGOV1', '2 REGCA1', '2 REECA1', '2 REPCA1']);
+    const dyr = writeDyr(sc).split(String.fromCharCode(13, 10));
+    expect(dyr[0]).toBe("     7 'GENCLS' 1 10 0 /");
+    // GENROU: T'do T''do T'qo T''qo H D Xd Xq X'd X'q X''d (the entered 0.16) Xl S(1.0) S(1.2).
+    expect(dyr.slice(1, 3)).toEqual(["     1 'GENROU' 1 6.5 0.035 0.75 0.05 2 0 1.8 1.7", '     0.25 0.45 0.16 0.1 0.05 0.3 /']);
+    expect(dyr).toContain("     1 'SEXS' 1 0.1 10 100 0.1 0 4 /");
+    expect(dyr).toContain("     1 'TGOV1' 1 0.05 0.5 1 0 2.1 7 0 /");
+    // REECA1 Q limits default to the machine's Q capability: ±0.264 Mvar / 0.8 MVA = ±0.33 pu.
+    const reeca = dyrRecords(sc).find((r) => r.model === 'REECA1')!;
+    expect(reeca.values.slice(19, 23)).toEqual(['0.33', '-0.33', '1.1', '0']);
+    expect(dyr.filter((l) => l.endsWith('/'))).toHaveLength(7);
   });
 });

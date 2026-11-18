@@ -60,7 +60,8 @@ def main():
 
     andes.config_logger(stream_level=30)
     kw = {'addfile': args.dyr} if args.dyr else {}
-    ss = andes.load(args.raw, setup=True, no_output=True, default_config=True, **kw)
+    # PV.pv2pq: enforce generator Q limits (a PV bus at its limit becomes PQ), as PSS/E does.
+    ss = andes.load(args.raw, setup=True, no_output=True, default_config=True, config_option=['PV.pv2pq=1'], **kw)
     if ss is None:
         print('ANDES could not load the case.')
         return 1
@@ -95,14 +96,16 @@ def main():
     if args.dyr:
         ss.TDS.config.tf = args.tf
         ss.TDS.config.no_tqdm = 1
+        ss.TDS.init()
+        init_ok = bool(ss.TDS.test_init())
         ss.TDS.run()
-        done = ss.TDS.exit_code == 0 and abs(ss.dae.t - args.tf) < 1e-6
+        done = init_ok and ss.exit_code == 0 and abs(ss.dae.t - args.tf) < 1e-6
         dyn = {m: getattr(ss, m).n for m in ('GENCLS', 'GENROU', 'SEXS', 'IEEET1', 'ESST1A', 'TGOV1', 'GAST', 'IEEEG1', 'REGCA1', 'REECA1', 'REPCA1', 'WTDTA1', 'WTARA1', 'WTPTA1', 'WTTQA1') if getattr(ss, m).n}
         print(f'Dynamic models: {", ".join(f"{k} x{v}" for k, v in dyn.items()) or "none"}')
-        print(f'TDS (flat run to {args.tf} s): {"COMPLETED" if done else "FAILED"} at t = {ss.dae.t:.4f} s, exit code {ss.TDS.exit_code}')
-        if done:
-            vmin, vmax = min(ss.Bus.v.v), max(ss.Bus.v.v)
-            print(f'  bus voltages at the end: {vmin:.4f} to {vmax:.4f} pu')
+        print(f'TDS initialization: {"OK" if init_ok else "FAILED (residuals after init)"}')
+        print(f'TDS (flat run to {args.tf} s): {"COMPLETED" if done else "FAILED"} at t = {ss.dae.t:.4f} s, exit code {ss.exit_code}')
+        vmin, vmax = min(ss.Bus.v.v), max(ss.Bus.v.v)
+        print(f'  bus voltages at the end: {vmin:.4f} to {vmax:.4f} pu (flat run: should match the power flow)')
         if not done:
             return 1
     return 0

@@ -2,7 +2,7 @@
 // ANDES results import. The domain does the work (src/domain/study); this page only shows it.
 
 import { useMemo, useState } from 'react';
-import { buildStudyCase, persistBusNumbers, applyTypicals, writeRaw, writeSeq, type Issue, type StudyCase } from '../domain/study';
+import { buildStudyCase, persistBusNumbers, applyTypicals, writeDyr, writeRaw, writeSeq, type Issue, type StudyCase } from '../domain/study';
 import type { Id, StudySettings } from '../domain/types';
 import { Page } from '../shell/Shell';
 import { Icon } from '../shell/icons';
@@ -142,6 +142,13 @@ export function StudyPage() {
   const meta = { app: `Conductor ${__APP_VERSION__}`, date: new Date().toISOString().slice(0, 10) };
   const exportRaw = () => download(`${base}.raw`, writeRaw(exportCase(), meta));
   const exportSeq = () => download(`${base}.seq`, writeSeq(exportCase()));
+  const exportDyr = () => download(`${base}.dyr`, writeDyr(exportCase()));
+  const exportAll = () => {
+    const sc1 = exportCase();
+    download(`${base}.raw`, writeRaw(sc1, meta));
+    setTimeout(() => download(`${base}.seq`, writeSeq(sc1)), 300);
+    setTimeout(() => download(`${base}.dyr`, writeDyr(sc1)), 600);
+  };
 
   return (
     <Page
@@ -151,6 +158,8 @@ export function StudyPage() {
         <>
           <button className="btn" onClick={exportRaw} title="PSS/E RAW v33 power-flow case"><Icon name="download" size={14} /> RAW</button>
           <button className="btn" onClick={exportSeq} title="PSS/E 33 sequence data (short circuit)"><Icon name="download" size={14} /> SEQ</button>
+          <button className="btn" onClick={exportDyr} title="PSS/E dynamic data (one record per device and model)"><Icon name="download" size={14} /> DYR</button>
+          <button className="btn primary" onClick={exportAll} title="RAW, SEQ and DYR as three downloads"><Icon name="download" size={14} /> All three</button>
         </>
       }
     >

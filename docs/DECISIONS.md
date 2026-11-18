@@ -160,3 +160,20 @@ ANDES 2.0.0 (`andes/io/psse.py`) reads v33 RAW with its own parser. The writer s
 - **Transformers** (`I, J, K, ICKT, CZ0, CZG, CC, RG1, XG1, R01, X01, RG2, XG2, R02, X02, RNUTRL, XNUTRL`, with CZ0 = CZG = 1). The whole Z0 is put on winding 1. RG is the neutral resistance in pu at that winding's bus base. Connection codes: Yg-Yg 1, Yg-Δ 2, Δ-Yg 3, anything else 4. Three-winding units get star-equivalent Z0 per winding and a best-effort code (all Yg 1, Yg-Yg-Δ 2, else 4).
 
 **Uncertain.** The SEQ format changed in v33, and no copy of the v33 POM was available while this was written. The machine and branch layouts are the long-standing ones. The transformer layout with CZ0/CZG, whether RG is entered as Zn or 3Zn, and the three-winding CC table should be checked against the PSS/E 33 manual before anyone relies on short-circuit results. ANDES does not read SEQ files, so `study:check` only checks that the file is written. Golden tests (`src/state/__tests__/study-sample.test.ts`) pin the current output.
+
+## D-016 DYR export and the ANDES time-domain check (2026-11-17)
+
+`src/domain/study/dyr.ts` writes one record per device and chosen model: `IBUS 'MODEL' ID ICONs CONs /`, eight values per line, with no header comment (PSS/E reads every `/` as the end of a record). Values come from the object's `design.dyn.<MODEL>.<PARAM>` props, or else the library typicals. Machine IDs are unquoted when numeric. REPCA1's branch ID is quoted.
+
+- **Utility:** GENCLS (H = 10 s on the fault-MVA base), a stiff grid.
+- **Synchronous generators:** GENROU / GENSAL / GENCLS, plus exciter (SEXS / ESST1A / IEEET1) and governor (TGOV1 / GAST / IEEEG1). A GENCLS machine gets no exciter or governor.
+- **PV, wind and stand-alone inverters:** REGCA1 + REECA1 (+ REPCA1 when the plant controller is on). BESS uses REECC1. Type 3 wind adds WTDTA1, WTARA1, WTPTA1 and WTTQA1.
+- **Motors** with the CIM5 option: CIM5BL (bus and load ID). ANDES 2.0 skips it and keeps the static load.
+
+**What ANDES needed** (each change stays valid PSS/E):
+1. **Q limits in the power flow.** Without them the sample PV inverter absorbs 0.48 Mvar to hold 1.0 pu, beyond its −0.26 Mvar limit, so REECA1's Q limiter changes state right after initialization. `andes-check.py` now loads with `PV.pv2pq=1`, so a PV bus at a limit becomes PQ, as PSS/E does by default.
+2. **Converter Q limits follow the machine.** REECA1/REECC1 QMax/QMin and REPCA1 Qmax/Qmin default to 0, which means "use the machine's Qmax/Qmin ÷ MBASE". The converter and the power flow then agree. A typical 0.436 pu would not.
+3. **REECA1 VMIN = 0.** ANDES starts the Q-control PI integrator at 0 and clamps it to [VMIN, VMAX]. A VMIN of 0.9 makes the anti-windup tracking term non-zero at t = 0, and init fails (`PIQ_xi`, `PIV_xi` residuals). With VFLAG = 0 (the default here) that PI is not in the signal path, so VMIN = 0 changes nothing in PSS/E.
+4. **ESST1A order.** The writer uses the PSS/E CON order. ANDES 2.0's `psse-dyr.yaml` maps ESST1A in a different order, so prefer SEXS or IEEET1 for ANDES runs. The sample uses SEXS.
+
+**Result** (`npm run study:check`, ANDES 2.0.0): the power flow converges in 5 iterations with Q limits enforced (mismatch 8.4e-11). Time-domain initialization passes `test_init`, and the 2 s flat run completes (exit code 0) with bus voltages 0.9889 to 1.0035 pu, the same as the power flow. Models in the case: GENCLS, GENROU, SEXS, TGOV1, REGCA1, REECA1, REPCA1. ANDES notes that the GENCLS internal EMF (1.0) is at the low end of its typical range. That is expected for a stiff source at a 1.0 pu setpoint.

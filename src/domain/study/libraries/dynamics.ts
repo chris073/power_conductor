@@ -16,7 +16,7 @@ export interface DynParam {
   /** Reads this prop instead of a generated `design.dyn.<MODEL>.<name>` field (shared values). */
   field?: string;
   /** Filled by the writer (machine base, bus numbers) when the value is 0. */
-  auto?: 'mbase';
+  auto?: 'mbase' | 'qmax' | 'qmin';
 }
 
 export interface DynModel {
@@ -86,7 +86,7 @@ export const DYN_MODELS: Record<string, DynModel> = {
     params: [
       ic('BUSR', 0), ic('PFFLAG', 0), ic('VFLAG', 0), ic('QFLAG', 0), ic('PFLAG', 0), ic('PQFLAG', 0),
       p('Vdip', 0.9, 'pu'), p('Vup', 1.1, 'pu'), p('Trv', 0.02, 's'), p('dbd1', -0.05, 'pu'), p('dbd2', 0.05, 'pu'), p('Kqv', 0), p('Iqh1', 1.05, 'pu'), p('Iql1', -1.05, 'pu'),
-      p('Vref0', 0, 'pu'), p('Iqfrz', 0, 'pu'), p('Thld', 0, 's'), p('Thld2', 0, 's'), p('Tp', 0.05, 's'), p('QMax', 0.436, 'pu'), p('QMin', -0.436, 'pu'), p('VMAX', 1.1, 'pu'), p('VMIN', 0.9, 'pu'),
+      p('Vref0', 0, 'pu'), p('Iqfrz', 0, 'pu'), p('Thld', 0, 's'), p('Thld2', 0, 's'), p('Tp', 0.05, 's'), p('QMax', 0, 'pu', { auto: 'qmax' }), p('QMin', 0, 'pu', { auto: 'qmin' }), p('VMAX', 1.1, 'pu'), p('VMIN', 0, 'pu'),
       p('Kqp', 0), p('Kqi', 0.1), p('Kvp', 0), p('Kvi', 40), p('Vref1', 1, 'pu'), p('Tiq', 0.02, 's'), p('dPmax', 99, 'pu/s'), p('dPmin', -99, 'pu/s'), p('PMAX', 1, 'pu'), p('PMIN', 0, 'pu'),
       p('Imax', 1.2, 'pu'), p('Tpord', 0.02, 's'),
       p('Vq1', 0), p('Iq1', 1.1), p('Vq2', 0.5), p('Iq2', 1.1), p('Vq3', 1), p('Iq3', 1.1), p('Vq4', 1.5), p('Iq4', 1.1),
@@ -99,7 +99,7 @@ export const DYN_MODELS: Record<string, DynModel> = {
     params: [
       ic('PFFLAG', 0), ic('VFLAG', 0), ic('QFLAG', 0), ic('PQFLAG', 0),
       p('Vdip', 0.9, 'pu'), p('Vup', 1.1, 'pu'), p('Trv', 0.02, 's'), p('dbd1', -0.05, 'pu'), p('dbd2', 0.05, 'pu'), p('Kqv', 0), p('Iqh1', 1.05, 'pu'), p('Iql1', -1.05, 'pu'),
-      p('Vref0', 0, 'pu'), p('Tp', 0.05, 's'), p('QMax', 0.436, 'pu'), p('QMin', -0.436, 'pu'), p('VMAX', 1.1, 'pu'), p('VMIN', 0.9, 'pu'),
+      p('Vref0', 0, 'pu'), p('Tp', 0.05, 's'), p('QMax', 0, 'pu', { auto: 'qmax' }), p('QMin', 0, 'pu', { auto: 'qmin' }), p('VMAX', 1.1, 'pu'), p('VMIN', 0, 'pu'),
       p('Kqp', 0), p('Kqi', 0.1), p('Kvp', 0), p('Kvi', 40), p('Tiq', 0.02, 's'), p('dPmax', 99, 'pu/s'), p('dPmin', -99, 'pu/s'), p('PMAX', 1, 'pu'), p('PMIN', -1, 'pu'),
       p('Imax', 1.2, 'pu'), p('Tpord', 0.02, 's'),
       p('Vq1', 0), p('Iq1', 1.1), p('Vq2', 0.5), p('Iq2', 1.1), p('Vq3', 1), p('Iq3', 1.1), p('Vq4', 1.5), p('Iq4', 1.1),
@@ -112,7 +112,7 @@ export const DYN_MODELS: Record<string, DynModel> = {
     params: [
       ic('BUSR', 0), ic('BUS1', 0), ic('BUS2', 0), ic('CKTID', 1), ic('VCFlag', 0), ic('RefFlag', 1), ic('Fflag', 0),
       p('Tfltr', 0.02, 's'), p('Kp', 18), p('Ki', 5), p('Tft', 0, 's'), p('Tfv', 0.075, 's'), p('Vfrz', 0, 'pu'), p('Rc', 0, 'pu'), p('Xc', 0, 'pu'), p('Kc', 0),
-      p('emax', 0.1, 'pu'), p('emin', -0.1, 'pu'), p('dbd1', 0, 'pu'), p('dbd2', 0, 'pu'), p('Qmax', 0.436, 'pu'), p('Qmin', -0.436, 'pu'), p('Kpg', 0.1), p('Kig', 0.05),
+      p('emax', 0.1, 'pu'), p('emin', -0.1, 'pu'), p('dbd1', 0, 'pu'), p('dbd2', 0, 'pu'), p('Qmax', 0, 'pu', { auto: 'qmax' }), p('Qmin', 0, 'pu', { auto: 'qmin' }), p('Kpg', 0.1), p('Kig', 0.05),
       p('Tp', 0.25, 's'), p('fdbd1', -0.0006, 'pu'), p('fdbd2', 0.0006, 'pu'), p('femax', 999, 'pu'), p('femin', -999, 'pu'), p('Pmax', 1, 'pu'), p('Pmin', 0, 'pu'), p('Tg', 0.1, 's'), p('Ddn', 20), p('Dup', 0),
     ],
   },
@@ -162,7 +162,7 @@ export function dynParamFields(models: string[], selectorKey: string, equals: st
         unit: prm.unit,
         study: 'dyn',
         dflt: prm.dflt,
-        help: prm.auto === 'mbase' ? '0: the machine base.' : prm.icon ? 'ICON (integer flag)' : undefined,
+        help: prm.auto === 'mbase' ? '0: the machine base.' : prm.auto ? `0: the machine ${prm.auto === 'qmax' ? 'Qmax' : 'Qmin'} / Mbase.` : prm.icon ? 'ICON (integer flag)' : undefined,
         showIf: { key: selectorKey, equals: equals ?? m, ...(fallback ? { fallback } : {}) },
       });
     }
