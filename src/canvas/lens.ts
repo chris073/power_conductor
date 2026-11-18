@@ -117,5 +117,6 @@ export function connectionDecoration(c: Connection, i: LensInput): Decoration {
     if (i.phase === 'operations' && i.live) cls = i.live.connections.has(c.id) ? 'op-live' : 'op-dead';
     if (i.phase === 'design') badge = missingRequired(c, 'design').length;
   }
-  return make(tr || cls, [], badge, false);
+  const r = i.results?.objects[c.id];
+  return make(tr || cls, r ? resultLines(r) : [], badge, false);
 }

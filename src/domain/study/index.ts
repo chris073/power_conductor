@@ -3,5 +3,6 @@ export { buildStudyCase, vectorGroup } from './build';
 export { applyTypicals, persistBusNumbers } from './persist';
 export { dyrRecords, writeDyr } from './dyr';
 export { writeRaw } from './raw';
+export { importAndesResults, parseAndesPf, type AndesPf } from './results';
 export { connectionCode2, connectionCode3, writeSeq } from './seq';
 export type * from './types';

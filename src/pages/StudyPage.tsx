@@ -1,8 +1,8 @@
 // Study page: project study settings, readiness report, bus-branch table, PSS/E exports and the
 // ANDES results import. The domain does the work (src/domain/study); this page only shows it.
 
-import { useMemo, useState } from 'react';
-import { buildStudyCase, persistBusNumbers, applyTypicals, writeDyr, writeRaw, writeSeq, type Issue, type StudyCase } from '../domain/study';
+import { useMemo, useRef, useState } from 'react';
+import { buildStudyCase, persistBusNumbers, applyTypicals, importAndesResults, parseAndesPf, writeDyr, writeRaw, writeSeq, type Issue, type StudyCase } from '../domain/study';
 import type { Id, StudySettings } from '../domain/types';
 import { Page } from '../shell/Shell';
 import { Icon } from '../shell/icons';
@@ -124,6 +124,45 @@ function BusTable({ sc }: { sc: StudyCase }) {
   );
 }
 
+function ResultsSection() {
+  const doc = useProject((s) => s.doc);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const res = doc.studyResults;
+  const onFile = async (f: File) => {
+    try {
+      const d0 = useProject.getState().doc;
+      const { results, warnings } = importAndesResults(d0, parseAndesPf(await f.text()));
+      useProject.getState().replaceDoc({ ...d0, studyResults: results });
+      useUi.getState().toast(`Imported ${Object.keys(results.buses).length} bus voltages and ${Object.values(results.objects).filter((o) => o.pFrom !== undefined).length} branch flows.`);
+      for (const w of warnings) useUi.getState().toast(w, 'error');
+    } catch (err) {
+      useUi.getState().toast(`Import failed: ${(err as Error).message}`, 'error');
+    }
+  };
+  return (
+    <section className="section">
+      <div className="section-head"><h2>Study results</h2><span className="rule" /></div>
+      <div className="panel pad">
+        <p className="small">
+          Run ANDES on the exported case and import its power-flow solution:{' '}
+          <code>.venv-study/Scripts/python scripts/andes-check.py case.raw --json case.pf.json</code>{' '}
+          (<code>npm run study:check</code> writes <code>study-out/sample.pf.json</code> for the sample). Bus voltages and branch flows appear read-only in the inspector and, with Study overlay › Study results, on the canvas.
+        </p>
+        {res ? (
+          <p className="small"><span className={`tag ${res.converged ? 'okish' : 'bad'}`}>{res.converged ? 'converged' : 'not converged'}</span> {res.source}. Imported {new Date(res.at).toLocaleString()}.</p>
+        ) : (
+          <p className="muted small">No results imported.</p>
+        )}
+        <div className="btn-row">
+          <button className="btn small" onClick={() => fileRef.current?.click()}><Icon name="upload" size={14} /> Import ANDES results (.json)</button>
+          {res && <button className="btn small ghost" onClick={() => useProject.getState().replaceDoc({ ...useProject.getState().doc, studyResults: null })}>Clear results</button>}
+          <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void onFile(f); e.target.value = ''; }} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function StudyPage() {
   const doc = useProject((s) => s.doc);
   const sc = useMemo(() => buildStudyCase(doc), [doc]);
@@ -182,6 +221,7 @@ export function StudyPage() {
           </button>
         </div>
       </section>
+      <ResultsSection />
       <Readiness sc={sc} />
       <BusTable sc={sc} />
     </Page>

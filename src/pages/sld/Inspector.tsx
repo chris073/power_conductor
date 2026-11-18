@@ -197,6 +197,24 @@ function ModelGroup({ obj, tag, fields, editor }: { obj: Equipment | Connection;
   );
 }
 
+/** Read-only values from the last imported power-flow solution. */
+function StudyResultsSection({ id }: { id: Id }) {
+  const res = useProject((s) => s.doc.studyResults);
+  const r = res?.objects[id];
+  if (!res || !r) return null;
+  const n = (v: number | undefined, d: number) => (v === undefined ? '—' : v.toFixed(d));
+  return (
+    <section className="insp-section">
+      <h4>Study results <span className="muted small">(read-only)</span></h4>
+      <dl className="results-grid">
+        {r.vm !== undefined && (<><dt>Voltage</dt><dd>{n(r.vm, 4)} pu ∠ {n(r.va, 2)}°</dd></>)}
+        {r.pFrom !== undefined && (<><dt>From end</dt><dd>{n(r.pFrom, 3)} MW, {n(r.qFrom, 3)} Mvar</dd><dt>To end</dt><dd>{n(r.pTo, 3)} MW, {n(r.qTo, 3)} Mvar</dd><dt>Losses</dt><dd>{n((r.pFrom ?? 0) + (r.pTo ?? 0), 4)} MW</dd></>)}
+      </dl>
+      <small className="muted">{res.converged ? '' : 'Not converged. '}{res.source}; imported {new Date(res.at).toLocaleString()}.</small>
+    </section>
+  );
+}
+
 function IdRow({ id }: { id: Id }) {
   return (
     <div className="id-row" title="Stable ID (never changes; tags are just labels)">
@@ -237,6 +255,7 @@ function EquipmentPanel({ e }: { e: Equipment }) {
           <Icon name="trace" size={14} /> Trace from here
         </button>
       </div>
+      <StudyResultsSection id={e.id} />
       <PhaseTabs obj={e} />
       {e.type !== 'lineup' && (
         <section className="insp-section">
@@ -300,6 +319,7 @@ function ConnectionPanel({ c }: { c: Connection }) {
         )}
         <small className="muted"> Select the cable and drag its segment handles to reshape it.</small>
       </section>
+      <StudyResultsSection id={c.id} />
       <PhaseTabs obj={c} />
       <CustomProps id={c.id} custom={c.custom} />
     </>

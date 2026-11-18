@@ -16,6 +16,7 @@ PSS/E and ANDES ready: modeling data on every device, and a study-case export (D
 - **SEQ export** (short circuit): machine positive/negative/zero-sequence impedances, zero-sequence branch data, and transformer zero-sequence data with connection codes from the Δ/Y/Yg fields and neutral grounding (D-015).
 - **DYR export** (dynamics): GENCLS for the utility; GENROU/GENSAL + SEXS/ESST1A/IEEET1 + TGOV1/GAST/IEEEG1 for generators; WECC REGCA1 + REECA1 (REECC1 for BESS) + REPCA1 for PV, BESS and inverters, plus WTDTA1/WTARA1/WTPTA1/WTTQA1 for Type 3 wind; CIM5BL for motors that choose it. The Study page exports RAW, SEQ and DYR (or all three at once).
 - `study:check` also runs a 2 s flat ANDES time-domain simulation on the DYR (D-016).
+- **Study results import** (Study page › Import ANDES results): bus Vm/Va and branch MW/Mvar from an ANDES power flow (`andes-check.py --json`, written automatically by `study:check`) appear read-only in the inspector with a timestamp, and on the canvas through Study overlay › Study results (D-017).
 - **Bus-number overlay** on the canvas (toolbar › Study overlay) in the Design lens.
 - `npm run study:check`: exports the sample project and runs ANDES power flow on it (`scripts/andes-check.py`, Python venv in `.venv-study`).
 - The sample project gains an overhead line, a capacitor bank, a standby generator and a PV array behind an inverter.

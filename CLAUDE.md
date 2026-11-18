@@ -22,7 +22,7 @@ py -3 -m venv .venv-study
 .venv-study/Scripts/python -m pip install andes
 ```
 
-It writes `study-out/sample.raw|.seq|.dyr`, runs ANDES power flow (and a 2 s flat time-domain run on the DYR) and exits non-zero if either fails. `npx tsx scripts/study-export.ts my.conductor.json` does the same for an exported project file; `--no-check` skips ANDES.
+It writes `study-out/sample.raw|.seq|.dyr`, runs ANDES power flow with generator Q limits (and a 2 s flat time-domain run on the DYR), writes the solution to `study-out/sample.pf.json` (import it on the Study page), and exits non-zero if either run fails. Study decisions: D-011 to D-017. `npx tsx scripts/study-export.ts my.conductor.json` does the same for an exported project file; `--no-check` skips ANDES.
 
 ## Standing instructions
 

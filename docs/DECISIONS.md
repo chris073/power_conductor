@@ -177,3 +177,15 @@ ANDES 2.0.0 (`andes/io/psse.py`) reads v33 RAW with its own parser. The writer s
 4. **ESST1A order.** The writer uses the PSS/E CON order. ANDES 2.0's `psse-dyr.yaml` maps ESST1A in a different order, so prefer SEXS or IEEET1 for ANDES runs. The sample uses SEXS.
 
 **Result** (`npm run study:check`, ANDES 2.0.0): the power flow converges in 5 iterations with Q limits enforced (mismatch 8.4e-11). Time-domain initialization passes `test_init`, and the 2 s flat run completes (exit code 0) with bus voltages 0.9889 to 1.0035 pu, the same as the power flow. Models in the case: GENCLS, GENROU, SEXS, TGOV1, REGCA1, REECA1, REPCA1. ANDES notes that the GENCLS internal EMF (1.0) is at the low end of its typical range. That is expected for a stiff source at a 1.0 pu setpoint.
+
+## D-017 Study results import: JSON from a small ANDES helper (2026-11-17)
+
+**Decision.** `scripts/andes-check.py case.raw [case.dyr] --json case.pf.json` writes the power-flow solution as JSON: `format: conductor-andes-pf`, source, solve time, converged, iterations, bus `vm`/`va` (deg), and per-Line `pFrom/qFrom/pTo/qTo` (MW/Mvar). The flows are computed from the solved pi model of each ANDES Line, with tap and phase shift. The Study page imports that file (`src/domain/study/results.ts`) into `doc.studyResults`, stamped with the import time. Re-importing or clearing is one undo step.
+
+- **Buses** match by their sticky PSS/E number. The voltage goes on the drawn Bus objects, or, for a study bus with no drawn bus, on its sources and loads.
+- **Branches** match by ANDES Line order (RAW branches, then two-winding transformers), checked against both end bus numbers. Results that no longer match the one-line are skipped with a warning. Three-winding star branches are skipped; their flows are not shown yet.
+- Results show read-only in the inspector ("Study results") and on the canvas through Toolbar › Study overlay › Study results (bus Vm∠Va, branch MW/Mvar at the from end).
+
+**Why JSON from a helper.** ANDES can write CSV and xlsx too, but those hold per-model variable dumps that would need ANDES's own naming to decode in the app. A ten-line JSON written next to the run is stable, needs no parser dependency in the browser, and carries the convergence flag with the numbers.
+
+**Alternatives.** Run ANDES in the browser (Pyodide): too heavy for now, on the roadmap as an idea. Parse PSS/E output files: no PSS/E license here.

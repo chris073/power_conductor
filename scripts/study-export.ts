@@ -40,5 +40,6 @@ if (!existsSync(py)) {
   console.error(`\nNo study venv at ${py}. Create it:  py -3 -m venv .venv-study  then  .venv-study/Scripts/python -m pip install andes`);
   process.exit(2);
 }
-const r = spawnSync(py, ['scripts/andes-check.py', ...Object.values(files).filter((f) => !f.endsWith('.seq'))], { stdio: 'inherit' });
+// The power-flow solution also lands in <case>.pf.json for Study › Import results.
+const r = spawnSync(py, ['scripts/andes-check.py', files.raw, files.dyr, '--json', join(outDir, `${base}.pf.json`)], { stdio: 'inherit' });
 process.exit(r.status ?? 1);

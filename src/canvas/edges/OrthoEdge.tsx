@@ -89,6 +89,11 @@ function OrthoEdgeImpl({ id, data, selected, sourceX, sourceY, targetX, targetY,
           {data!.deco.badge > 0 ? ` (${data!.deco.badge})` : ''}
         </text>
       )}
+      {!control && mid && data!.deco.lines.length > 0 && (
+        <text className="cable-tag cable-result" x={mid.x + (mid.vertical ? 5 : 0)} y={mid.y + (mid.vertical ? 12 : 9)} textAnchor={mid.vertical ? 'start' : 'middle'}>
+          {data!.deco.lines.join('  ')}
+        </text>
+      )}
       {selected && !straight && (
         <EdgeLabelRenderer>
           {shown.slice(0, -1).map((a, i) => {
