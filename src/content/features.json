@@ -1,0 +1,40 @@
+{
+  "items": [
+    { "id": "shell", "title": "App shell (top bar, nav, status bar)", "status": "Done", "area": "Shell", "version": "0.1.0", "notes": "Home Conductor look (Desert light/dark), editable project name, lens switcher, save indicator, theme toggle." },
+    { "id": "projects", "title": "Projects: local CRUD, duplicate, sheets", "status": "Done", "area": "Projects", "version": "0.1.0", "notes": "Projects hold one or more SLD sheets; sample project to start from." },
+    { "id": "json-storage", "title": "Versioned project JSON with autosave, export and import", "status": "Done", "area": "Data", "version": "0.1.0", "notes": "schemaVersion + migrations; localStorage adapter behind a swappable interface." },
+    { "id": "canvas", "title": "Infinite canvas: grid, snap, pan, zoom to cursor, fit, minimap", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "palette", "title": "Searchable categorized palette with drag-to-place", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "editing", "title": "Select, marquee, move, rotate, mirror, delete, duplicate, copy/paste, align/distribute, undo/redo", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "connections", "title": "Terminal-to-terminal orthogonal connections with draggable segments", "status": "Done", "area": "SLD", "version": "0.1.0", "notes": "Cables are objects with properties; control wiring for CT/VT secondaries." },
+    { "id": "buses", "title": "Resizable bus bars with taps anywhere", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "symbols-ansi", "title": "ANSI symbol library (sources, transformers, switching, gear, protection, loads, annotations)", "status": "Done", "area": "Symbols", "version": "0.1.0" },
+    { "id": "inspector", "title": "Schema-driven inspector with phase tabs and custom properties", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "lens", "title": "Lifecycle lens: Concept, Design, Commissioning, Operations", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "trace", "title": "Energization trace with open-device boundary", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "shortcuts", "title": "Keyboard shortcuts and ? overlay", "status": "Done", "area": "SLD", "version": "0.1.0" },
+    { "id": "settings", "title": "Settings: symbols, units, grid, routing, theme, autosave, data", "status": "Done", "area": "Settings", "version": "0.1.0" },
+    { "id": "perf-gen", "title": "Dev-only 500 / 700 large-diagram generator", "status": "Done", "area": "Dev", "version": "0.1.0" },
+    { "id": "app-revisions", "title": "Revisions page: Conductor version history", "status": "Done", "area": "Shell", "version": "0.1.0", "notes": "Reads CHANGELOG.md; the status bar shows the app version." },
+
+    { "id": "drawing-revisions", "title": "Drawing revision control: issue revisions (A, B… then 0, 1…), IFR / IFC / As-Built", "status": "Planned", "area": "Revisions", "notes": "Immutable snapshots with date, author and description. Deferred by decision D-004." },
+    { "id": "revision-diff", "title": "Compare revisions: added / removed / moved / changed + property-level changes", "status": "Planned", "area": "Revisions", "notes": "Green added, red removed, amber moved or changed; working copy vs a revision, or revision vs revision." },
+    { "id": "auto-clouds", "title": "Automatic revision clouds since the last issued revision", "status": "Planned", "area": "Revisions", "notes": "Manual revision clouds already exist as annotations." },
+    { "id": "storage-decision", "title": "Storage: database vs JSON files with a more formal structure", "status": "Planned", "area": "Data", "notes": "Today: one JSON document per project in localStorage behind an adapter (D-005)." },
+    { "id": "e2e", "title": "Playwright end-to-end tests", "status": "Planned", "area": "Quality", "notes": "Vitest covers domain and layout today (D-008)." },
+    { "id": "iec", "title": "Full IEC 60617 symbol set", "status": "Planned", "area": "Symbols", "notes": "The IEC setting falls back to ANSI for now." },
+    { "id": "router-obstacles", "title": "Obstacle-avoiding connector router", "status": "Idea", "area": "SLD", "notes": "Grid A* around symbol boxes; today auto routes are simple L/Z/U shapes." },
+    { "id": "themes", "title": "More themes (Glacier, Ember, Retro, Robot from Home Conductor)", "status": "Idea", "area": "Shell" },
+    { "id": "container-membership", "title": "Switchgear lineup contains its sections (move together)", "status": "Idea", "area": "SLD", "notes": "Today the lineup is a visual container." },
+    { "id": "insert-on-cable", "title": "Drop a device onto a cable to insert it in-line", "status": "Idea", "area": "SLD" },
+    { "id": "rf-pro", "title": "Decide on React Flow Pro subscription before commercial release", "status": "Idea", "area": "Business", "notes": "Attribution is hidden today (D-002)." },
+
+    { "id": "later-studies", "title": "Load flow, short-circuit and arc-flash study hooks", "status": "Idea", "area": "Later", "notes": "Later list (inferred from the brief's lifecycle goals; confirm)." },
+    { "id": "later-protection", "title": "Protection coordination and relay settings management", "status": "Idea", "area": "Later", "notes": "Later list (inferred; confirm)." },
+    { "id": "later-schedules", "title": "Equipment and cable schedules (CSV / Excel export)", "status": "Idea", "area": "Later", "notes": "Later list (inferred; confirm)." },
+    { "id": "later-export", "title": "PDF / SVG / DXF export with title block", "status": "Idea", "area": "Later", "notes": "Later list (inferred; confirm)." },
+    { "id": "later-cx-forms", "title": "Commissioning test forms, attachments and photos per object", "status": "Idea", "area": "Later", "notes": "Later list (inferred; confirm)." },
+    { "id": "later-sync", "title": "Server, multi-user sync and authentication", "status": "Idea", "area": "Later", "notes": "Out of scope for local-first v0." },
+    { "id": "later-field", "title": "Field / mobile mode for walkdowns and as-left status", "status": "Idea", "area": "Later", "notes": "Later list (inferred; confirm)." }
+  ]
+}

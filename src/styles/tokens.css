@@ -1,0 +1,73 @@
+/* Conductor tokens. Ported from Home Conductor's "Desert" theme (light + night).
+   Components use tokens only. Auto = follow the OS; data-theme="light" | "dark" forces one. */
+:root {
+  --bg: #f7eedc; --surface: #fffaf0; --surface-2: #efe5cf;
+  --header: #424420; --header-bg: var(--header); --header-ink: #f7eedc; --header-muted: #c9c5a8; --header-line: 3px solid #c85815;
+  --nav-bg: #efe5cf; --nav-ink: #5c5c54; --nav-active: #fffaf0; --nav-active-ink: #2a2a15; --nav-mark: #c85815;
+  --ink: #2a2a15; --ink-2: #5c5c54; --ink-3: #75756a;
+  --border: #d9cfb6; --border-strong: #c9b99f;
+  --good: #6d7042; --good-soft: #e6e3c9; --good-ink: #424420;
+  --primary: #525530; --primary-hover: #424420; --primary-ink: #fffaf0;
+  --accent: #c85815;
+  --warn: #c85815; --warn-soft: #f6dfc7; --warn-ink: #8a3d0f;
+  --bad: #994444; --bad-soft: #f2d9d9; --bad-ink: #7a2e2e;
+  --idle: #8f8f82;
+  --brand-ring: #e69556; --brand-dash: #a5ab7d;
+  --cat-1: #2a78d6; --cat-2: #eb6834; --cat-3: #1baf7a; --cat-4: #eda100; --cat-5: #e87ba4;
+  --radius: 12px; --radius-sm: 8px;
+  --shadow: 0 1px 0 rgba(42, 42, 21, 0.06), 0 2px 8px rgba(42, 42, 21, 0.06);
+  --mono: "Cascadia Mono", "Cascadia Code", ui-monospace, SFMono-Regular, Consolas, monospace;
+  --sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* canvas */
+  --canvas-bg: #fffaf0; --grid-minor: #d9cfb6; --grid-major: #efe5cf;
+  --sym-stroke: #2a2a15; --sym-fill: #2a2a15; --wire: #2a2a15; --control-wire: #75756a; --bus: #2a2a15;
+  --select: #c85815; --select-soft: rgba(200, 88, 21, 0.12);
+  --energized: #1b8f63; --boundary: #c85815; --dim: 0.28;
+  --term: #c85815;
+  --cx-notstarted: #8f8f82; --cx-progress: #2a78d6; --cx-passed: #1b8f63; --cx-failed: #b43c3c; --cx-punch: #d08a00;
+  --minimap-bg: #fffaf0; --minimap-mask: rgba(239, 229, 207, 0.65);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c1b16; --surface: #24231b; --surface-2: #2d2c22;
+    --header: #2a2a15; --header-ink: #e8dfc8; --header-muted: #a5ab7d; --header-line: 3px solid #e69556;
+    --nav-bg: #201f18; --nav-ink: #babaaa; --nav-active: #2d2c22; --nav-active-ink: #e8e2cf; --nav-mark: #e69556;
+    --ink: #e8e2cf; --ink-2: #babaaa; --ink-3: #8f8f82; --border: #353420; --border-strong: #424420;
+    --good: #a5ab7d; --good-soft: #33341f; --good-ink: #c9cda5; --primary: #6d7042; --primary-hover: #858a55; --primary-ink: #fffaf0;
+    --accent: #e69556; --warn: #e69556; --warn-soft: #3a2a1a; --warn-ink: #f0b87a; --bad: #d88989; --bad-soft: #3a2222; --bad-ink: #e8a5a5;
+    --idle: #75756a;
+    --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    --canvas-bg: #1c1b16; --grid-minor: #3a392c; --grid-major: #2a2920;
+    --sym-stroke: #e8e2cf; --sym-fill: #e8e2cf; --wire: #e8e2cf; --control-wire: #8f8f82; --bus: #e8e2cf;
+    --select: #e69556; --select-soft: rgba(230, 149, 86, 0.16);
+    --energized: #3fcf8e; --boundary: #e69556;
+    --term: #e69556;
+    --cx-notstarted: #75756a; --cx-progress: #3987e5; --cx-passed: #3fcf8e; --cx-failed: #e06b6b; --cx-punch: #e0a52a;
+    --minimap-bg: #24231b; --minimap-mask: rgba(20, 20, 15, 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #1c1b16; --surface: #24231b; --surface-2: #2d2c22;
+  --header: #2a2a15; --header-ink: #e8dfc8; --header-muted: #a5ab7d; --header-line: 3px solid #e69556;
+  --nav-bg: #201f18; --nav-ink: #babaaa; --nav-active: #2d2c22; --nav-active-ink: #e8e2cf; --nav-mark: #e69556;
+  --ink: #e8e2cf; --ink-2: #babaaa; --ink-3: #8f8f82; --border: #353420; --border-strong: #424420;
+  --good: #a5ab7d; --good-soft: #33341f; --good-ink: #c9cda5; --primary: #6d7042; --primary-hover: #858a55; --primary-ink: #fffaf0;
+  --accent: #e69556; --warn: #e69556; --warn-soft: #3a2a1a; --warn-ink: #f0b87a; --bad: #d88989; --bad-soft: #3a2222; --bad-ink: #e8a5a5;
+  --idle: #75756a;
+  --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  --canvas-bg: #1c1b16; --grid-minor: #3a392c; --grid-major: #2a2920;
+  --sym-stroke: #e8e2cf; --sym-fill: #e8e2cf; --wire: #e8e2cf; --control-wire: #8f8f82; --bus: #e8e2cf;
+  --select: #e69556; --select-soft: rgba(230, 149, 86, 0.16);
+  --energized: #3fcf8e; --boundary: #e69556;
+  --term: #e69556;
+  --cx-notstarted: #75756a; --cx-progress: #3987e5; --cx-passed: #3fcf8e; --cx-failed: #e06b6b; --cx-punch: #e0a52a;
+  --minimap-bg: #24231b; --minimap-mask: rgba(20, 20, 15, 0.6);
+  color-scheme: dark;
+}
