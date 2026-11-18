@@ -15,6 +15,7 @@
     { "id": "shortcuts", "title": "Keyboard shortcuts and ? overlay", "status": "Done", "area": "SLD", "version": "0.1.0" },
     { "id": "settings", "title": "Settings: symbols, units, grid, routing, theme, autosave, data", "status": "Done", "area": "Settings", "version": "0.1.0" },
     { "id": "perf-gen", "title": "Dev-only 500 / 700 large-diagram generator", "status": "Done", "area": "Dev", "version": "0.1.0" },
+    { "id": "perf-check", "title": "Performance check: 60 fps pan, zoom and drag at 500 / 700 (production build)", "status": "Done", "area": "Dev", "version": "0.1.1", "notes": "scripts/perf-cdp.mjs; results in D-010." },
     { "id": "app-revisions", "title": "Revisions page: Conductor version history", "status": "Done", "area": "Shell", "version": "0.1.0", "notes": "Reads CHANGELOG.md; the status bar shows the app version." },
 
     { "id": "drawing-revisions", "title": "Drawing revision control: issue revisions (A, B… then 0, 1…), IFR / IFC / As-Built", "status": "Planned", "area": "Revisions", "notes": "Immutable snapshots with date, author and description. Deferred by decision D-004." },
@@ -27,6 +28,7 @@
     { "id": "themes", "title": "More themes (Glacier, Ember, Retro, Robot from Home Conductor)", "status": "Idea", "area": "Shell" },
     { "id": "container-membership", "title": "Switchgear lineup contains its sections (move together)", "status": "Idea", "area": "SLD", "notes": "Today the lineup is a visual container." },
     { "id": "insert-on-cable", "title": "Drop a device onto a cable to insert it in-line", "status": "Idea", "area": "SLD" },
+    { "id": "lod", "title": "Level-of-detail rendering for very large diagrams (boxes when zoomed far out)", "status": "Idea", "area": "SLD", "notes": "Not needed at 500 / 700 (D-010)." },
     { "id": "rf-pro", "title": "Decide on React Flow Pro subscription before commercial release", "status": "Idea", "area": "Business", "notes": "Attribution is hidden today (D-002)." },
 
     { "id": "later-studies", "title": "Load flow, short-circuit and arc-flash study hooks", "status": "Idea", "area": "Later", "notes": "Later list (inferred from the brief's lifecycle goals; confirm)." },

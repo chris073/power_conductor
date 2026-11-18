@@ -75,3 +75,22 @@ Domain and layout logic is covered by unit tests: topology, serialization and mi
 ## D-009 Bus-tap behavior (2026-11-17)
 
 Dropping a connection anywhere on a bus creates a tap at the snapped offset, and reuses an existing tap at the same offset. Taps whose last connection is deleted are removed. Stretching the bus from its start keeps taps at their absolute positions. Shrinking it clamps them.
+
+## D-010 Performance at 500 objects / 700 connections: no extra optimization needed (2026-11-17)
+
+**Check.** `scripts/perf-cdp.mjs` drives headless Chrome (1600×1000) over the DevTools protocol. It opens the dev-only generator (500 objects, 700 connections) and records `requestAnimationFrame` deltas and long tasks while it pans, zooms, and drags a device and a bus (a bus drag re-routes about 25 cables per frame). It runs once zoomed to fit (all 500/700 rendered) and once zoomed in (about 260/400 rendered, because `onlyRenderVisibleElements` culls the rest).
+
+**Result (production build, `vite preview`).** Every case holds 60 fps: median frame 17.9 ms, p95 18.1 ms (34.8 ms for the bus drag), worst single frame 36 ms (one dropped frame), and zero long tasks over 50 ms. Committing a drag or undo with a full re-render takes about 26–37 ms.
+
+**Dev build (`npm run dev`).** The median is still 60 fps, but there are periodic hitches of 50–140 ms while zooming or dragging at fit. A CPU profile puts that time in React's development runtime (`jsxDEV`, `runWithFiberInDEV`) and in React Flow's per-frame visibility and handle bookkeeping, not in our adapters, topology or routing.
+
+**Decision.** No code changes. The things that already keep it fast stay as they are:
+- the canvas is a memoized projection (`canvas/adapters.ts` `Memo` reuses unchanged node and edge objects);
+- drags preview through local overrides and commit once at the end;
+- decorations and trace are memoized on `doc`;
+- store subscriptions are narrow (cursor and zoom re-render only the status bar);
+- `onlyRenderVisibleElements` is on.
+
+Re-run the script after canvas changes. If a larger diagram is needed later, the next steps would be: cull at fit with a level-of-detail mode (draw symbols as boxes below about 0.3 zoom), and incremental topology.
+
+**Caveat.** Headless Chrome on one Windows machine. Real-GPU numbers in a visible window may differ slightly.

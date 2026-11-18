@@ -2,6 +2,14 @@
 
 All notable changes to Conductor. Versions follow semver; the in-app **Revisions** page shows this file.
 
+## [0.1.1] - 2026-11-17
+
+### Added
+- `scripts/perf-cdp.mjs`: a repeatable, dependency-free performance check. It drives headless Chrome over the DevTools protocol and reports frame times for pan, zoom and drag on the 500-object / 700-connection generated diagram. The production build holds 60 fps with no long tasks (docs/DECISIONS.md D-010).
+
+### Changed
+- The inspector opens the first phase tab that has fields when the current lens phase has none for the selected type (for example, a breaker in the Concept lens opens on Design).
+
 ## [0.1.0] - 2026-11-17
 
 First working sketcher.

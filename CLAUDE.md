@@ -51,6 +51,7 @@ npm run lint     # ESLint, including the architecture import boundaries
 | `src/pages/` | SLD workspace (palette, toolbar, inspector) and other pages |
 | `src/styles/tokens.css` | Theme tokens (Desert light/dark, from Home Conductor) |
 | `src/dev/` | Dev-only tools (500/700 diagram generator) |
+| `scripts/perf-cdp.mjs` | Dev-only perf check (headless Chrome over CDP); re-run after canvas changes (D-010) |
 
 ## Working notes
 
