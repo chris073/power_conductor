@@ -19,7 +19,7 @@ kbd { background: var(--surface-2); border: 1px solid var(--border-strong); bord
 .topbar { background: var(--header-bg); color: var(--header-ink); border-bottom: var(--header-line); display: flex; align-items: center; gap: 14px; padding: 8px 18px; z-index: 15; min-width: 0; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; flex: none; }
 .brand svg { width: 32px; height: 32px; flex: none; }
-.brand h1 { margin: 0; font-size: 17px; letter-spacing: 0.18em; font-weight: 700; line-height: 1.1; }
+.brand h1 { margin: 0; font-size: 17px; letter-spacing: 0.18em; font-weight: 700; line-height: 1.1; text-transform: none; }
 .brand p { margin: 0; font-size: 11.5px; color: var(--header-muted); }
 .project-name { background: transparent; border: 1px solid transparent; color: var(--header-ink); font-size: 15px; font-weight: 600; padding: 5px 8px; border-radius: var(--radius-sm); min-width: 120px; max-width: 320px; }
 .project-name:hover { border-color: color-mix(in srgb, var(--header-ink) 25%, transparent); }
@@ -28,7 +28,7 @@ kbd { background: var(--surface-2); border: 1px solid var(--border-strong); bord
 .phase-switch button { background: transparent; border: 0; color: var(--header-muted); padding: 5px 10px; font-size: 12.5px; cursor: pointer; white-space: nowrap; }
 .phase-switch button + button { border-left: 1px solid color-mix(in srgb, var(--header-ink) 18%, transparent); }
 .phase-switch button:hover { color: var(--header-ink); }
-.phase-switch button[aria-pressed="true"] { background: var(--accent); color: #fffaf0; }
+.phase-switch button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .save-ind { font-size: 12px; color: var(--header-muted); white-space: nowrap; display: flex; align-items: center; }
 .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--header-muted); margin-right: 6px; }
 .pulse.saved { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent); }
@@ -126,7 +126,7 @@ table.mini td { padding: 6px 10px; }
 /* ---------- toast, overlay */
 .toasts { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%); display: grid; gap: 8px; z-index: 40; }
 .toast { background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 13px; box-shadow: var(--shadow); max-width: min(560px, calc(100vw - 32px)); cursor: pointer; }
-.toast.err { background: var(--bad); color: #fff; }
+.toast.err { background: var(--bad); color: var(--bg); }
 .overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); display: grid; place-items: center; z-index: 50; }
 .overlay-card { width: min(640px, calc(100vw - 32px)); max-height: 80vh; overflow: auto; padding: 16px 18px; }
 .overlay-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
@@ -168,3 +168,12 @@ table.mini td { padding: 6px 10px; }
 .table-scroll { overflow-x: auto; }
 td.members { display: flex; flex-wrap: wrap; gap: 4px 8px; }
 .link-btn.small { font-size: 12px; }
+
+/* ---------- theme picker (Home Conductor theme cards) */
+.themes-row { grid-template-columns: 1fr; }
+.themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.theme-card { display: grid; gap: 4px; text-align: left; padding: 10px; cursor: pointer; color: var(--ink); font: inherit; }
+.theme-card[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.theme-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.swatch { display: flex; height: 30px; border-radius: 6px; overflow: hidden; margin-bottom: 6px; border: 1px solid var(--border); }
+.swatch i { flex: 1; }

@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { PHASES, PHASE_LABEL } from '../domain/types';
 import { useProject } from '../state/projectStore';
-import { useSettings, type ThemeChoice } from '../state/settingsStore';
+import { THEMES, useSettings } from '../state/settingsStore';
 import { useUi } from '../state/uiStore';
 import { Icon, type IconName } from './icons';
 
@@ -96,13 +96,14 @@ function SaveIndicator() {
   );
 }
 
-const NEXT_THEME: Record<ThemeChoice, ThemeChoice> = { auto: 'light', light: 'dark', dark: 'auto' };
-
+/** Steps through every theme in picker order (Settings has the full picker). */
 function ThemeToggle() {
   const theme = useSettings((s) => s.theme);
+  const i = Math.max(0, THEMES.findIndex((t) => t.id === theme));
+  const next = THEMES[(i + 1) % THEMES.length]!;
   const icon: IconName = theme === 'auto' ? 'auto' : theme === 'light' ? 'sun' : 'moon';
   return (
-    <button className="icon-btn" title={`Theme: ${theme} (click to change)`} aria-label="Toggle theme" onClick={() => useSettings.getState().set({ theme: NEXT_THEME[theme] })}>
+    <button className="icon-btn" title={`Theme: ${THEMES[i]!.name}. Click for ${next.name}; all themes are in Settings.`} aria-label="Next theme" onClick={() => useSettings.getState().set({ theme: next.id })}>
       <Icon name={icon} />
     </button>
   );

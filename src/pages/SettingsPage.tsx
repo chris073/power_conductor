@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { exportProject, importProjectFile, resetLocalData } from '../state/session';
-import { useSettings, type Settings } from '../state/settingsStore';
+import { THEMES, useSettings, type Settings } from '../state/settingsStore';
 import { useUi } from '../state/uiStore';
 import { Page } from '../shell/Shell';
 import { Icon } from '../shell/icons';
@@ -59,9 +59,21 @@ export function SettingsPage() {
       <section className="section">
         <div className="section-head"><h2>App</h2><span className="rule" /></div>
         <div className="panel pad settings">
-          <Row label="Theme">
-            <Seg value={s.theme} options={[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']]} onChange={(v) => set({ theme: v })} />
-          </Row>
+          <div className="setting-row themes-row">
+            <div>
+              <div className="setting-label">Theme</div>
+              <small className="muted">Home Conductor's themes. The top-bar button steps through them.</small>
+            </div>
+            <div className="themes" role="group" aria-label="Theme">
+              {THEMES.map((t) => (
+                <button key={t.id} className="panel theme-card" aria-pressed={t.id === s.theme} onClick={() => set({ theme: t.id })}>
+                  <span className="swatch">{t.swatch.map((c) => <i key={c} style={{ background: c }} />)}</span>
+                  <strong>{t.name}</strong>
+                  <span className="muted small">{t.note}</span>
+                </button>
+              ))}
+            </div>
+          </div>
           <Row label="Autosave delay" help="Seconds after the last change before the project is written to local storage.">
             <Seg value={s.autosaveSeconds} options={[[1, '1 s'], [2, '2 s'], [5, '5 s'], [15, '15 s']]} onChange={(v) => set({ autosaveSeconds: v })} />
           </Row>

@@ -17,6 +17,8 @@ PSS/E and ANDES ready: modeling data on every device, and a study-case export (D
 - `npm run study:check`: exports the sample project and runs ANDES power flow on it (`scripts/andes-check.py`, Python venv in `.venv-study`).
 - The sample project gains an overhead line, a capacitor bank, a standby generator and a PV array behind an inverter.
 
+- **All Home Conductor themes**: Glacier, Retro, Ember and Robot join Desert light and night. They are picked from theme cards in Settings, and the top-bar button steps through them. Each theme includes canvas colors for symbols, wires, selection, trace and commissioning (D-014).
+
 ### Changed
 - Project files move to schema 2 (D-012). Transformer voltage ratio text ("13.8-0.48 kV") becomes numeric HV/LV (and tertiary) winding voltages; older files migrate automatically.
 - Pasting a bus drops its PSS/E bus number so numbers stay unique.

@@ -44,7 +44,7 @@
 .tabs button { border: 1px solid var(--border); background: var(--surface); border-radius: 999px; padding: 2px 9px; font-size: 11.5px; cursor: pointer; color: var(--ink-2); display: inline-flex; gap: 4px; align-items: center; }
 .tabs button[aria-selected="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
 .tabs button:disabled { opacity: 0.4; cursor: default; }
-.tab-miss { font-style: normal; background: var(--warn); color: #fff; border-radius: 999px; padding: 0 5px; font-size: 10px; font-weight: 700; }
+.tab-miss { font-style: normal; background: var(--warn); color: var(--bg); border-radius: 999px; padding: 0 5px; font-size: 10px; font-weight: 700; }
 .fields { display: grid; gap: 10px; }
 .label-pick { display: grid; gap: 6px; margin-bottom: 4px; }
 .conn-list { list-style: none; padding: 0; margin: 0 0 6px; display: grid; gap: 4px; font-size: 13px; }
@@ -63,7 +63,7 @@
 .legend .sw.cx-passed { color: var(--cx-passed); }
 .legend .sw.cx-failed { color: var(--cx-failed); }
 .legend .sw.cx-punch { color: var(--cx-punch); }
-.badge-demo { font-style: normal; display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--warn); color: #fff; font-size: 10px; font-weight: 700; margin-right: 4px; }
+.badge-demo { font-style: normal; display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: var(--warn); color: var(--bg); font-size: 10px; font-weight: 700; margin-right: 4px; }
 
 /* ---------- React Flow overrides */
 .react-flow { --xy-background-color: var(--canvas-bg); background: var(--canvas-bg); }
@@ -87,7 +87,7 @@
 .eq-label { position: absolute; top: 0; display: flex; flex-direction: column; pointer-events: none; white-space: nowrap; line-height: 1.25; }
 .eq-tag { font-weight: 700; font-size: 12px; color: var(--ink); }
 .eq-line { font-size: 11px; color: var(--ink-2); font-family: var(--mono); }
-.eq-badge { position: absolute; top: -8px; right: -8px; width: 17px; height: 17px; border-radius: 50%; background: var(--warn); color: #fff; font-size: 10px; font-weight: 700; display: grid; place-items: center; pointer-events: none; }
+.eq-badge { position: absolute; top: -8px; right: -8px; width: 17px; height: 17px; border-radius: 50%; background: var(--warn); color: var(--bg); font-size: 10px; font-weight: 700; display: grid; place-items: center; pointer-events: none; }
 .eq-flag { position: absolute; top: -12px; left: -6px; color: var(--bad); font-size: 14px; pointer-events: none; }
 .eq-badge.static, .eq-flag.static { position: static; display: inline-grid; margin-left: 4px; }
 .bus-label { flex-direction: row; gap: 8px; align-items: baseline; }
@@ -120,7 +120,7 @@
 .cloud { position: relative; }
 .cloud-path { fill: none; stroke: var(--bad); stroke-width: 1.8; }
 .cloud.is-selected .cloud-path { stroke: var(--select); stroke-dasharray: 5 3; }
-.cloud-text { position: absolute; right: -6px; bottom: -6px; background: var(--bad); color: #fff; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
+.cloud-text { position: absolute; right: -6px; bottom: -6px; background: var(--bad); color: var(--bg); font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; }
 .resize-handle.react-flow__resize-control.handle { width: 8px; height: 8px; background: var(--surface); border: 1.5px solid var(--select); border-radius: 2px; }
 .resize-line.react-flow__resize-control.line { border-color: var(--select); }
 

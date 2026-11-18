@@ -1,7 +1,21 @@
 import { create } from 'zustand';
 import type { VoltageUnit } from '../domain/units';
 
-export type ThemeChoice = 'auto' | 'light' | 'dark';
+/** 'light' / 'dark' are Desert light / night (ids kept from 0.1 so saved choices still work). */
+export type ThemeChoice = 'auto' | 'light' | 'dark' | 'glacier' | 'retro' | 'ember' | 'robot';
+
+/** Home Conductor's theme list (apps/web/public/js/settings.js), with Conductor's ids. */
+export const THEMES: { id: ThemeChoice; name: string; note: string; swatch: string[] }[] = [
+  { id: 'auto', name: 'Desert (auto)', note: 'NOMAD palette, follows Windows light/dark', swatch: ['#f7eedc', '#424420', '#6d7042', '#c85815'] },
+  { id: 'light', name: 'Desert light', note: 'Sand and olive', swatch: ['#f7eedc', '#424420', '#6d7042', '#c85815'] },
+  { id: 'dark', name: 'Desert night', note: 'NOMAD dark', swatch: ['#1c1b16', '#2a2a15', '#a5ab7d', '#e69556'] },
+  { id: 'glacier', name: 'Glacier', note: 'Cool blue: navy slate and ice', swatch: ['#0e1726', '#142137', '#4cc2ff', '#4fd1a5'] },
+  { id: 'retro', name: 'Retro', note: 'White phosphor on black, all monospace', swatch: ['#000000', '#121212', '#f2f2e8', '#8f8f86'] },
+  { id: 'ember', name: 'Ember', note: 'Graphite with molten amber', swatch: ['#161619', '#27272c', '#ff8a2a', '#7fd38b'] },
+  { id: 'robot', name: 'Robot', note: 'Brushed steel, hazard stripes, status LEDs', swatch: ['#2a2d31', '#1b1d20', '#7ee08a', '#f5b301'] },
+];
+
+export const isTheme = (t: unknown): t is ThemeChoice => THEMES.some((x) => x.id === t);
 
 export interface Settings {
   symbolStandard: 'ANSI' | 'IEC';
@@ -32,7 +46,8 @@ function load(): Settings {
     const raw = localStorage.getItem(KEY);
     const s = raw ? { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as Partial<Settings>) } : { ...DEFAULT_SETTINGS };
     const t = localStorage.getItem('pc-theme');
-    if (t === 'light' || t === 'dark') s.theme = t;
+    if (isTheme(t) && t !== 'auto') s.theme = t;
+    if (!isTheme(s.theme)) s.theme = 'auto';
     return s;
   } catch {
     return { ...DEFAULT_SETTINGS };

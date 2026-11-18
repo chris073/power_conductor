@@ -25,7 +25,7 @@
     { "id": "e2e", "title": "Playwright end-to-end tests", "status": "Planned", "area": "Quality", "notes": "Vitest covers domain and layout today (D-008)." },
     { "id": "iec", "title": "Full IEC 60617 symbol set", "status": "Planned", "area": "Symbols", "notes": "The IEC setting falls back to ANSI for now." },
     { "id": "router-obstacles", "title": "Obstacle-avoiding connector router", "status": "Idea", "area": "SLD", "notes": "Grid A* around symbol boxes; today auto routes are simple L/Z/U shapes." },
-    { "id": "themes", "title": "More themes (Glacier, Ember, Retro, Robot from Home Conductor)", "status": "Idea", "area": "Shell" },
+    { "id": "themes", "title": "All Home Conductor themes (Glacier, Ember, Retro, Robot) with a theme-card picker", "status": "Done", "area": "Shell", "version": "0.2.0", "notes": "Reverses D-003; see D-014." },
     { "id": "container-membership", "title": "Switchgear lineup contains its sections (move together)", "status": "Idea", "area": "SLD", "notes": "Today the lineup is a visual container." },
     { "id": "insert-on-cable", "title": "Drop a device onto a cable to insert it in-line", "status": "Idea", "area": "SLD" },
     { "id": "lod", "title": "Level-of-detail rendering for very large diagrams (boxes when zoomed far out)", "status": "Idea", "area": "SLD", "notes": "Not needed at 500 / 700 (D-010)." },

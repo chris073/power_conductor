@@ -1,5 +1,8 @@
-/* Conductor tokens. Ported from Home Conductor's "Desert" theme (light + night).
-   Components use tokens only. Auto = follow the OS; data-theme="light" | "dark" forces one. */
+/* Conductor tokens. Themes are ported verbatim from Home Conductor (apps/web/public/styles.css):
+   Desert light + night, Glacier, Retro, Ember and Robot (D-014). Components use tokens only.
+   Auto (no data-theme) follows the OS between Desert light and night; data-theme="light" | "dark"
+   forces Desert; "glacier" | "retro" | "ember" | "robot" pick the others. Each theme also sets the
+   canvas tokens (canvas, grid, symbols, wires, bus, selection, trace and commissioning colors). */
 :root {
   --bg: #f7eedc; --surface: #fffaf0; --surface-2: #efe5cf;
   --header: #424420; --header-bg: var(--header); --header-ink: #f7eedc; --header-muted: #c9c5a8; --header-line: 3px solid #c85815;
@@ -8,16 +11,17 @@
   --border: #d9cfb6; --border-strong: #c9b99f;
   --good: #6d7042; --good-soft: #e6e3c9; --good-ink: #424420;
   --primary: #525530; --primary-hover: #424420; --primary-ink: #fffaf0;
-  --accent: #c85815;
+  --accent: #c85815; --accent-ink: #fffaf0;
   --warn: #c85815; --warn-soft: #f6dfc7; --warn-ink: #8a3d0f;
   --bad: #994444; --bad-soft: #f2d9d9; --bad-ink: #7a2e2e;
-  --idle: #8f8f82;
+  --idle: #8f8f82; --bar: #8b7355;
   --brand-ring: #e69556; --brand-dash: #a5ab7d;
   --cat-1: #2a78d6; --cat-2: #eb6834; --cat-3: #1baf7a; --cat-4: #eda100; --cat-5: #e87ba4;
   --radius: 12px; --radius-sm: 8px;
   --shadow: 0 1px 0 rgba(42, 42, 21, 0.06), 0 2px 8px rgba(42, 42, 21, 0.06);
   --mono: "Cascadia Mono", "Cascadia Code", ui-monospace, SFMono-Regular, Consolas, monospace;
   --sans: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --head-font: var(--sans); --head-case: none; --head-track: 0;
 
   /* canvas */
   --canvas-bg: #fffaf0; --grid-minor: #d9cfb6; --grid-major: #efe5cf;
@@ -31,14 +35,14 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
     --bg: #1c1b16; --surface: #24231b; --surface-2: #2d2c22;
     --header: #2a2a15; --header-ink: #e8dfc8; --header-muted: #a5ab7d; --header-line: 3px solid #e69556;
     --nav-bg: #201f18; --nav-ink: #babaaa; --nav-active: #2d2c22; --nav-active-ink: #e8e2cf; --nav-mark: #e69556;
     --ink: #e8e2cf; --ink-2: #babaaa; --ink-3: #8f8f82; --border: #353420; --border-strong: #424420;
     --good: #a5ab7d; --good-soft: #33341f; --good-ink: #c9cda5; --primary: #6d7042; --primary-hover: #858a55; --primary-ink: #fffaf0;
     --accent: #e69556; --warn: #e69556; --warn-soft: #3a2a1a; --warn-ink: #f0b87a; --bad: #d88989; --bad-soft: #3a2222; --bad-ink: #e8a5a5;
-    --idle: #75756a;
+    --idle: #75756a; --bar: #a5ab7d;
     --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
     --shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
     --canvas-bg: #1c1b16; --grid-minor: #3a392c; --grid-major: #2a2920;
@@ -59,7 +63,7 @@
   --ink: #e8e2cf; --ink-2: #babaaa; --ink-3: #8f8f82; --border: #353420; --border-strong: #424420;
   --good: #a5ab7d; --good-soft: #33341f; --good-ink: #c9cda5; --primary: #6d7042; --primary-hover: #858a55; --primary-ink: #fffaf0;
   --accent: #e69556; --warn: #e69556; --warn-soft: #3a2a1a; --warn-ink: #f0b87a; --bad: #d88989; --bad-soft: #3a2222; --bad-ink: #e8a5a5;
-  --idle: #75756a;
+  --idle: #75756a; --bar: #a5ab7d;
   --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
   --shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
   --canvas-bg: #1c1b16; --grid-minor: #3a392c; --grid-major: #2a2920;
@@ -71,3 +75,112 @@
   --minimap-bg: #24231b; --minimap-mask: rgba(20, 20, 15, 0.6);
   color-scheme: dark;
 }
+
+/* Glacier: cool blue. Navy-slate surfaces (not black), icy ink, one cyan accent, teal for "good". */
+:root[data-theme="glacier"] {
+  --accent-ink: #06121f;
+  --bg: #0e1726; --surface: #142137; --surface-2: #1a2a44;
+  --header: #0b1424; --header-bg: linear-gradient(100deg, #0a1322 0%, #10223f 60%, #15305a 100%); --header-ink: #e8f2ff; --header-muted: #8fb0d6; --header-line: 2px solid #4cc2ff;
+  --nav-bg: #0c1524; --nav-ink: #a3b9d4; --nav-active: #1a2a44; --nav-active-ink: #eef6ff; --nav-mark: #4cc2ff;
+  --ink: #e8f2ff; --ink-2: #b6c9e0; --ink-3: #8299b6; --border: #213350; --border-strong: #2d4468;
+  --good: #4fd1a5; --good-soft: #10342f; --good-ink: #8ce6c4; --primary: #2b7bd0; --primary-hover: #3a91ec; --primary-ink: #f4f9ff;
+  --accent: #4cc2ff; --warn: #f2b44c; --warn-soft: #382b12; --warn-ink: #ffd383; --bad: #ff7a85; --bad-soft: #3a1a24; --bad-ink: #ffb1b8;
+  --idle: #5b7090; --bar: #4cc2ff;
+  --brand-ring: #4cc2ff; --brand-dash: #2b7bd0;
+  --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
+  --radius: 10px; --radius-sm: 7px;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 6px 18px rgba(3, 10, 22, 0.45);
+  --canvas-bg: #0e1726; --grid-minor: #213350; --grid-major: #16243b;
+  --sym-stroke: #e8f2ff; --sym-fill: #e8f2ff; --wire: #e8f2ff; --control-wire: #8299b6; --bus: #e8f2ff;
+  --select: #4cc2ff; --select-soft: rgba(76, 194, 255, 0.16);
+  --energized: #4fd1a5; --boundary: #f2b44c;
+  --term: #4cc2ff;
+  --cx-notstarted: #5b7090; --cx-progress: #3a91ec; --cx-passed: #4fd1a5; --cx-failed: #ff7a85; --cx-punch: #f2b44c;
+  --minimap-bg: #142137; --minimap-mask: rgba(8, 14, 26, 0.6);
+  color-scheme: dark;
+}
+
+/* Retro: white phosphor on true black, monospace everywhere, hard edges, inverse-video accents.
+   On the canvas, selection and terminals use the amber "warn" phosphor so they stand apart from the white linework. */
+:root[data-theme="retro"] {
+  --accent-ink: #000;
+  --bg: #000; --surface: #000; --surface-2: #121212;
+  --header: #000; --header-bg: #000; --header-ink: #f2f2e8; --header-muted: #a6a69c; --header-line: 1px solid #f2f2e8;
+  --nav-bg: #000; --nav-ink: #c9c9bf; --nav-active: #f2f2e8; --nav-active-ink: #000; --nav-mark: #f2f2e8;
+  --ink: #f2f2e8; --ink-2: #c9c9bf; --ink-3: #8f8f86; --border: #4a4a45; --border-strong: #f2f2e8;
+  --good: #b9f0b9; --good-soft: #0d1f0d; --good-ink: #cdf6cd; --primary: #f2f2e8; --primary-hover: #ffffff; --primary-ink: #000;
+  --accent: #f2f2e8; --warn: #f0d98e; --warn-soft: #1f1a08; --warn-ink: #f6e5ad; --bad: #ff9c8c; --bad-soft: #260d0a; --bad-ink: #ffbcb1;
+  --idle: #6e6e66; --bar: #f2f2e8;
+  --brand-ring: #f2f2e8; --brand-dash: #8f8f86;
+  --cat-1: #f2f2e8; --cat-2: #b9b9ae; --cat-3: #85857c; --cat-4: #5c5c55; --cat-5: #3d3d38;
+  --radius: 0; --radius-sm: 0;
+  --sans: var(--mono); --head-font: var(--mono); --head-case: uppercase; --head-track: 0.08em;
+  --shadow: none;
+  --canvas-bg: #000; --grid-minor: #2b2b28; --grid-major: #141414;
+  --sym-stroke: #f2f2e8; --sym-fill: #f2f2e8; --wire: #f2f2e8; --control-wire: #8f8f86; --bus: #f2f2e8;
+  --select: #f0d98e; --select-soft: rgba(240, 217, 142, 0.16);
+  --energized: #b9f0b9; --boundary: #ff9c8c;
+  --term: #f0d98e;
+  --cx-notstarted: #6e6e66; --cx-progress: #a6c8ff; --cx-passed: #b9f0b9; --cx-failed: #ff9c8c; --cx-punch: #f0d98e;
+  --minimap-bg: #000; --minimap-mask: rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+:root[data-theme="retro"] body { font-size: 13px; }
+:root[data-theme="retro"] .panel { border-color: var(--border); }
+:root[data-theme="retro"] .btn:not(.primary):hover:not(:disabled) { background: var(--ink); color: #000; }
+:root[data-theme="retro"] ::selection { background: #f2f2e8; color: #000; }
+
+/* Ember: graphite charcoal with molten amber accents and a soft glow on live things. */
+:root[data-theme="ember"] {
+  --accent-ink: #1a0d03;
+  --bg: #161619; --surface: #1e1e22; --surface-2: #27272c;
+  --header: #131315; --header-bg: linear-gradient(95deg, #121214 0%, #1d1715 55%, #2e1a10 100%); --header-ink: #f3eee8; --header-muted: #aaa49c; --header-line: 2px solid #ff7a1a;
+  --nav-bg: #131315; --nav-ink: #b8b2aa; --nav-active: #27272c; --nav-active-ink: #f7f3ee; --nav-mark: #ff7a1a;
+  --ink: #f3eee8; --ink-2: #c6c0b8; --ink-3: #8f8982; --border: #2d2d33; --border-strong: #3d3d45;
+  --good: #7fd38b; --good-soft: #17301c; --good-ink: #aae8b3; --primary: #c4531a; --primary-hover: #df651f; --primary-ink: #fff8f1;
+  --accent: #ff8a2a; --warn: #ffb02e; --warn-soft: #382a0e; --warn-ink: #ffd37b; --bad: #ff6b5e; --bad-soft: #3a1714; --bad-ink: #ffa69c;
+  --idle: #6b665f; --bar: #ff8a2a;
+  --brand-ring: #ff8a2a; --brand-dash: #c4531a;
+  --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.025) inset, 0 6px 18px rgba(0, 0, 0, 0.4);
+  --canvas-bg: #161619; --grid-minor: #2d2d33; --grid-major: #1f1f23;
+  --sym-stroke: #f3eee8; --sym-fill: #f3eee8; --wire: #f3eee8; --control-wire: #8f8982; --bus: #f3eee8;
+  --select: #ff8a2a; --select-soft: rgba(255, 138, 42, 0.16);
+  --energized: #7fd38b; --boundary: #ffb02e;
+  --term: #ff8a2a;
+  --cx-notstarted: #6b665f; --cx-progress: #5aa2ff; --cx-passed: #7fd38b; --cx-failed: #ff6b5e; --cx-punch: #ffb02e;
+  --minimap-bg: #1e1e22; --minimap-mask: rgba(10, 10, 12, 0.6);
+  color-scheme: dark;
+}
+:root[data-theme="ember"] .tr-live, :root[data-theme="ember"] .op-live { filter: drop-shadow(0 0 3px color-mix(in srgb, var(--energized) 55%, transparent)); }
+
+/* Robot: brushed steel, hazard stripes, LED status, square corners, mono headings.
+   Amber is the selection color here, so the open-device boundary uses the "bad" red to stay distinct. */
+:root[data-theme="robot"] {
+  --accent-ink: #1b1d20;
+  --bg: #2a2d31; --surface: #33373c; --surface-2: #3d4247;
+  --header: #1b1d20; --header-bg: linear-gradient(180deg, #2b2f33 0%, #17191c 100%); --header-ink: #e6e9ec; --header-muted: #9aa3ad;
+  --header-line: 6px solid transparent;
+  --nav-bg: #24272b; --nav-ink: #aab2bb; --nav-active: #3d4247; --nav-active-ink: #f1f3f5; --nav-mark: #f5b301;
+  --ink: #e9ecef; --ink-2: #b7bec6; --ink-3: #8a929b; --border: #474c52; --border-strong: #5a6067;
+  --good: #7ee08a; --good-soft: #263a2a; --good-ink: #a6f0ae; --primary: #5b6773; --primary-hover: #6d7a87; --primary-ink: #f1f3f5;
+  --accent: #f5b301; --warn: #f5b301; --warn-soft: #3a3115; --warn-ink: #ffd255; --bad: #ff6b5e; --bad-soft: #3d2422; --bad-ink: #ff9d94;
+  --idle: #6b737c; --bar: #9aa3ad;
+  --brand-ring: #f5b301; --brand-dash: #9aa3ad;
+  --cat-1: #3987e5; --cat-2: #d95926; --cat-3: #199e70; --cat-4: #c98500; --cat-5: #d55181;
+  --radius: 3px; --radius-sm: 2px;
+  --head-font: var(--mono); --head-case: uppercase; --head-track: 0.06em;
+  --shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 0 rgba(0, 0, 0, 0.35);
+  --canvas-bg: #2a2d31; --grid-minor: #474c52; --grid-major: #33373c;
+  --sym-stroke: #e9ecef; --sym-fill: #e9ecef; --wire: #e9ecef; --control-wire: #8a929b; --bus: #e9ecef;
+  --select: #f5b301; --select-soft: rgba(245, 179, 1, 0.16);
+  --energized: #7ee08a; --boundary: #ff6b5e;
+  --term: #f5b301;
+  --cx-notstarted: #6b737c; --cx-progress: #5aa2ff; --cx-passed: #7ee08a; --cx-failed: #ff6b5e; --cx-punch: #ffd255;
+  --minimap-bg: #33373c; --minimap-mask: rgba(20, 22, 25, 0.6);
+  color-scheme: dark;
+}
+:root[data-theme="robot"] .topbar { border-image: repeating-linear-gradient(-45deg, #f5b301 0 10px, #17191c 10px 20px) 6; }
+:root[data-theme="robot"] .panel { background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.04)); }
+
+h1, h2, h3, h4 { font-family: var(--head-font); text-transform: var(--head-case); letter-spacing: var(--head-track); }

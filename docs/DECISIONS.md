@@ -26,7 +26,7 @@ Newest last. Each entry: what we decided, why, and what we gave up.
 
 `proOptions.hideAttribution = true`, at the user's request. The MIT license allows it. xyflow asks commercial users to subscribe to React Flow Pro. Revisit before commercial release.
 
-## D-003 Themes: Desert light and dark only (2026-11-17)
+## D-003 Themes: Desert light and dark only (2026-11-17), superseded by D-014
 
 Tokens are ported verbatim from Home Conductor's Desert theme (`src/styles/tokens.css`). The theme can be Auto (OS), Light or Dark, set by a pre-paint script in `index.html` (`localStorage['pc-theme']`). Other Home Conductor themes are on the roadmap.
 
@@ -140,3 +140,13 @@ ANDES 2.0.0 (`andes/io/psse.py`) reads v33 RAW with its own parser. The writer s
 - **Utility source.** A generator with MBASE = fault MVA and ZSORCE = 1 pu at the source X/R. It is the island swing unless another unit is flagged.
 
 **Result.** `npm run study:check` exports the sample substation (7 buses, 2 transformers, 5 branches including a 2-mile overhead line, a utility, a genset and a PV inverter). ANDES 2.0.0 power flow converges in 4 Newton iterations (mismatch 9.4e-9).
+
+## D-014 All Home Conductor themes (reverses D-003) (2026-11-17)
+
+**At the user's request**, Conductor now ships every Home Conductor theme, not only Desert: Desert light and night, Glacier, Retro, Ember and Robot. The token values are copied verbatim from Home Conductor (`apps/web/public/styles.css`), along with their theme-specific component rules (Retro hover and selection, Robot hazard-stripe top bar).
+
+- **Canvas tokens.** Each theme also defines Conductor's canvas tokens: canvas, grid, symbol stroke, wire, control wire, bus, selection, terminals, energized and boundary (trace and Operations), commissioning colors and minimap. The rules: linework uses the theme ink; selection uses the accent; energized uses the theme's "good"; the boundary uses "warn". Where the accent and warn are the same color (Robot), or the accent is the ink (Retro), the boundary uses "bad" and selection uses warn, so the two stay distinct. Conductor has no diff colors yet (revision diff is on the roadmap), so there are no diff tokens to derive.
+- **`--accent-ink`** is new: the text color on accent fills (the active lens button). Badges on warn and bad fills use `var(--bg)` as text, so they stay readable on both light and dark themes.
+- **Ids.** `light` and `dark` keep meaning Desert light and night, so saved choices from 0.1 still work. Auto (no `data-theme`) follows the OS between Desert light and night. The pre-paint script in `index.html` accepts every id, so there is no flash.
+- **UI.** Settings has Home Conductor-style theme cards (`aria-pressed`). The top-bar button steps through all themes in picker order.
+- **Checked** in headless Chrome against the production build: the SLD in every theme in the Design lens, with the energization trace on, renders with no console errors.
