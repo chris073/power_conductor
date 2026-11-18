@@ -1,6 +1,6 @@
 // Golden snippets: the sample substation exported as PSS/E RAW v33.
 import { describe, expect, it } from 'vitest';
-import { buildStudyCase, persistBusNumbers, writeRaw } from '../../domain/study';
+import { buildStudyCase, persistBusNumbers, writeRaw, writeSeq } from '../../domain/study';
 import { buildSampleProject } from '../sample';
 
 function sampleCase() {
@@ -43,5 +43,20 @@ describe('sample substation study export', () => {
       '13.80000,0.000,30.000,2.50,2.50,2.50,0,0,14.49000,13.11000,1.05000,0.95000,5,0,0.0,0.0,0.0',
       '0.48000,0.000',
     ]);
+  });
+
+  it('writes golden SEQ records', () => {
+    const seq = writeSeq(sc).split(String.fromCharCode(13, 10));
+    expect(seq[0]).toMatch(/^0, 33 {5}\/ PSS\(R\)E-33 SEQ/);
+    // Utility: Z1 = Z2 = 1 pu on its 500 MVA base at X/R 15; Z0 = Z1 (no SLG data).
+    expect(seq).toContain("7,'1 ',0.066519,0.997785,0.066519,0.997785,0.066519,0.997785");
+    // Inverter: no zero-sequence source.
+    expect(seq).toContain("2,'1 ',0.000000,0.833333,0.000000,0.833333,999.000000,999.000000");
+    // Overhead line: R0 = (0.306 + 0.2858)·2 / 1.9044.
+    expect(seq.find((l) => l.startsWith("7,5,'1 ',"))!.split(',')[3]).toBe('0.621508');
+    // Δ-Yg transformer: CC = 3, Z0 = Z1 on the system base.
+    expect(seq).toContain("6,3,0,'1 ',1,1,3,0.000000,0.0,0.325269,2.276884,0.000000,0.0,0.0,0.0,0.0,0.0");
+    expect(seq.filter((l) => l.startsWith('0 / END OF'))).toHaveLength(8);
+    expect(seq.at(-2)).toBe('Q');
   });
 });

@@ -2,4 +2,5 @@
 export { buildStudyCase, vectorGroup } from './build';
 export { applyTypicals, persistBusNumbers } from './persist';
 export { writeRaw } from './raw';
+export { connectionCode2, connectionCode3, writeSeq } from './seq';
 export type * from './types';

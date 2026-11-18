@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { referenceOneLine } from '../../__tests__/helpers';
 import { buildStudyCase } from '../build';
+import { connectionCode2, connectionCode3 } from '../seq';
 import { applyTypicals, persistBusNumbers } from '../persist';
 import { branchPu, shuntMvarAtBase, sourceZ0, splitZ, theveninOnOwnBase, xfmrZ, zBase } from '../perunit';
 
@@ -189,5 +190,17 @@ describe('bus numbers and typicals', () => {
     const sc2 = buildStudyCase(doc);
     expect(sc2.issues.find((i) => i.code === 'zero-impedance')!.objectId).toBe(cable.id);
     expect(sc2.issues.find((i) => i.code === 'missing-pf' && i.objectId === cable.id)).toBeDefined();
+  });
+});
+
+describe('sequence data', () => {
+  it('maps winding connections to PSS/E connection codes', () => {
+    expect(connectionCode2('Yg', 'Yg')).toBe(1);
+    expect(connectionCode2('Yg', 'Δ')).toBe(2);
+    expect(connectionCode2('Δ', 'Yg')).toBe(3);
+    expect(connectionCode2('Δ', 'Δ')).toBe(4);
+    expect(connectionCode2('Y', 'Yg')).toBe(4);
+    expect(connectionCode3(['Yg', 'Yg', 'Δ'])).toBe(2);
+    expect(connectionCode3(['Yg', 'Yg', 'Yg'])).toBe(1);
   });
 });

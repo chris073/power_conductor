@@ -155,6 +155,16 @@ export function fillEquipment(e: Equipment, uses: TypicalUse[], freqHz = 60): Pr
       break;
   }
   schemaDefaults(e, f);
+  if (e.type === 'generator') {
+    // Neutral resistor sized for the usual let-through current: about 5 A for high resistance
+    // grounding, 400 A for low resistance (IEEE Std 142 "Green Book" practice).
+    const g = f.props['design.grounding'];
+    const kv = f.num('design.kv');
+    if (kv && (g === 'High-resistance' || g === 'Low-resistance')) {
+      const amps = g === 'High-resistance' ? 5 : 400;
+      f.set('design.groundOhm', (kv * 1000) / Math.sqrt(3) / amps, `${amps} A neutral resistor`);
+    }
+  }
   return f.props;
 }
 

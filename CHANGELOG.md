@@ -13,6 +13,7 @@ PSS/E and ANDES ready: modeling data on every device, and a study-case export (D
 
 - **Study page** (left nav): system MVA base, frequency, cable-collapse thresholds; a **readiness report** (islands without a swing bus, missing or conflicting base kV, transformer kV that does not match its buses, missing study values, zero or negative impedance, duplicate bus numbers, and every typical value used), where each item opens the object on the SLD; the **bus-branch table** (bus number, name, base kV, type, island, member objects); **Save bus numbers** and **Apply typicals**; and **RAW v33 export**.
 - Node-breaker to bus-branch reduction: closed switching devices, buses, CTs and ties merge into study buses; open devices split them; cables with a length become branches (short ones merge). PSS/E bus numbers are sticky across exports.
+- **SEQ export** (short circuit): machine positive/negative/zero-sequence impedances, zero-sequence branch data, and transformer zero-sequence data with connection codes from the Δ/Y/Yg fields and neutral grounding (D-015).
 - **Bus-number overlay** on the canvas (toolbar › Study overlay) in the Design lens.
 - `npm run study:check`: exports the sample project and runs ANDES power flow on it (`scripts/andes-check.py`, Python venv in `.venv-study`).
 - The sample project gains an overhead line, a capacitor bank, a standby generator and a PV array behind an inverter.

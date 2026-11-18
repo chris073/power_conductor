@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseProject } from '../src/domain/serialization/projectFile';
-import { buildStudyCase, persistBusNumbers, writeRaw } from '../src/domain/study';
+import { buildStudyCase, persistBusNumbers, writeRaw, writeSeq } from '../src/domain/study';
 import { buildSampleProject } from '../src/state/sample';
 
 const args = process.argv.slice(2);
@@ -23,8 +23,9 @@ const sc = buildStudyCase(doc);
 const base = (input ? doc.name : 'sample').replace(/[^\w.-]+/g, '_');
 mkdirSync(outDir, { recursive: true });
 const meta = { app: 'Conductor study:check', date: new Date().toISOString().slice(0, 10) };
-const files = { raw: join(outDir, `${base}.raw`) };
+const files = { raw: join(outDir, `${base}.raw`), seq: join(outDir, `${base}.seq`) };
 writeFileSync(files.raw, writeRaw(sc, meta));
+writeFileSync(files.seq, writeSeq(sc));
 
 const count = (s: string) => sc.issues.filter((i) => i.severity === s).length;
 console.log(`Study case "${doc.name}": ${sc.buses.length} buses, ${sc.branches.length} branches, ${sc.xfmr2.length + sc.xfmr3.length} transformers, ${sc.gens.length} machines, ${sc.loads.length} loads.`);

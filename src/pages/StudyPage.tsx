@@ -2,7 +2,7 @@
 // ANDES results import. The domain does the work (src/domain/study); this page only shows it.
 
 import { useMemo, useState } from 'react';
-import { buildStudyCase, persistBusNumbers, applyTypicals, writeRaw, type Issue, type StudyCase } from '../domain/study';
+import { buildStudyCase, persistBusNumbers, applyTypicals, writeRaw, writeSeq, type Issue, type StudyCase } from '../domain/study';
 import type { Id, StudySettings } from '../domain/types';
 import { Page } from '../shell/Shell';
 import { Icon } from '../shell/icons';
@@ -141,6 +141,7 @@ export function StudyPage() {
   };
   const meta = { app: `Conductor ${__APP_VERSION__}`, date: new Date().toISOString().slice(0, 10) };
   const exportRaw = () => download(`${base}.raw`, writeRaw(exportCase(), meta));
+  const exportSeq = () => download(`${base}.seq`, writeSeq(exportCase()));
 
   return (
     <Page
@@ -149,6 +150,7 @@ export function StudyPage() {
       actions={
         <>
           <button className="btn" onClick={exportRaw} title="PSS/E RAW v33 power-flow case"><Icon name="download" size={14} /> RAW</button>
+          <button className="btn" onClick={exportSeq} title="PSS/E 33 sequence data (short circuit)"><Icon name="download" size={14} /> SEQ</button>
         </>
       }
     >

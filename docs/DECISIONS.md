@@ -150,3 +150,13 @@ ANDES 2.0.0 (`andes/io/psse.py`) reads v33 RAW with its own parser. The writer s
 - **Ids.** `light` and `dark` keep meaning Desert light and night, so saved choices from 0.1 still work. Auto (no `data-theme`) follows the OS between Desert light and night. The pre-paint script in `index.html` accepts every id, so there is no flash.
 - **UI.** Settings has Home Conductor-style theme cards (`aria-pressed`). The top-bar button steps through all themes in picker order.
 - **Checked** in headless Chrome against the production build: the SLD in every theme in the Design lens, with the energization trace on, renders with no console errors.
+
+## D-015 SEQ (sequence data) export (2026-11-17)
+
+`src/domain/study/seq.ts` writes the PSS/E 33 sequence file: a change-code record `0, 33`, then machine impedance data, empty negative- and zero-sequence shunt load sections, zero-sequence branch data, an empty mutual section, zero-sequence transformer data, and empty switched and fixed shunt sections, then `Q`.
+
+- **Machines** (`I, ID, ZRPOS, ZXPOS, ZRNEG, ZXNEG, RZERO, XZERO`, pu on MBASE). Utility: Z1 = Z2 = the Thevenin source; Z0 from the SLG fault MVA and X0/R0 (Z0 = 3·S/S_slg − 2·Z1), or Z1 when there is no SLG data. Synchronous machines: Z1 = ZSORCE (R, X″d); Z2 = X2 (default X″d); Z0 = X0, plus 3·Rn of the neutral resistor. An ungrounded neutral, and inverter-based plants, are written as an open zero-sequence path (999 pu). A generator with high- or low-resistance grounding and no resistor value gets a typical resistor sized for 5 A or 400 A (IEEE 142).
+- **Branches** (`I, J, ICKT, RLINZ, XLINZ, BCHZ, GI, BI, GJ, BJ`, system base) take R0/X0/B0 from cables (rule-of-thumb typicals 3·R1, 3·X1) and lines (Carson). The optional trailing fields of later revisions (IPR, SCTYP) are left off, so PSS/E uses its defaults.
+- **Transformers** (`I, J, K, ICKT, CZ0, CZG, CC, RG1, XG1, R01, X01, RG2, XG2, R02, X02, RNUTRL, XNUTRL`, with CZ0 = CZG = 1). The whole Z0 is put on winding 1. RG is the neutral resistance in pu at that winding's bus base. Connection codes: Yg-Yg 1, Yg-Δ 2, Δ-Yg 3, anything else 4. Three-winding units get star-equivalent Z0 per winding and a best-effort code (all Yg 1, Yg-Yg-Δ 2, else 4).
+
+**Uncertain.** The SEQ format changed in v33, and no copy of the v33 POM was available while this was written. The machine and branch layouts are the long-standing ones. The transformer layout with CZ0/CZG, whether RG is entered as Zn or 3Zn, and the three-winding CC table should be checked against the PSS/E 33 manual before anyone relies on short-circuit results. ANDES does not read SEQ files, so `study:check` only checks that the file is written. Golden tests (`src/state/__tests__/study-sample.test.ts`) pin the current output.
