@@ -15,6 +15,28 @@ function Tb({ icon, title, onClick, disabled, active }: { icon: IconName; title:
   );
 }
 
+function StudyOverlayPicker() {
+  const overlay = useUi((s) => s.studyOverlay);
+  const hasResults = useProject((s) => !!s.doc.studyResults);
+  return (
+    <select
+      className="input tb-select"
+      value={overlay}
+      aria-label="Study overlay"
+      title="Study overlay: PSS/E bus numbers (Design lens) or imported power-flow results"
+      onChange={(e) => {
+        const v = e.target.value as typeof overlay;
+        useUi.getState().setStudyOverlay(v);
+        if (v === 'busNum' && useUi.getState().phase !== 'design') useUi.getState().setPhase('design');
+      }}
+    >
+      <option value="off">Study overlay: off</option>
+      <option value="busNum">Bus numbers</option>
+      <option value="results" disabled={!hasResults}>Study results{hasResults ? '' : ' (none imported)'}</option>
+    </select>
+  );
+}
+
 export function Toolbar() {
   const api = useCanvasApi();
   const sel = useUi((s) => s.selection);
@@ -61,6 +83,7 @@ export function Toolbar() {
           <Icon name="x" size={14} /> Clear
         </button>
       )}
+      <StudyOverlayPicker />
       <span className="spacer" />
       {import.meta.env.DEV && (
         <button

@@ -12,7 +12,7 @@
 
 import { CATALOG } from './catalog';
 import { terminalKind, terminalsOf } from './model';
-import type { Equipment, Id, ProjectDoc } from './types';
+import type { Connection, Equipment, Id, ProjectDoc } from './types';
 
 type Graph = Pick<ProjectDoc, 'equipment' | 'connections'>;
 
@@ -51,7 +51,12 @@ export interface ElectricalNodes {
   members: Map<string, { equipmentId: Id; terminalId: string }[]>;
 }
 
-export function electricalNodes(g: Graph): ElectricalNodes {
+export interface NodeOptions {
+  /** Cables for which this returns true are NOT joined (the study reduction keeps them as branches). */
+  keepApart?: (c: Connection) => boolean;
+}
+
+export function electricalNodes(g: Graph, opts: NodeOptions = {}): ElectricalNodes {
   const uf = new UnionFind();
   const ties = new Map<string, string>();
   for (const e of Object.values(g.equipment)) {
@@ -71,6 +76,7 @@ export function electricalNodes(g: Graph): ElectricalNodes {
   }
   for (const c of Object.values(g.connections)) {
     if (c.kind !== 'cable') continue;
+    if (opts.keepApart?.(c)) continue;
     const a = g.equipment[c.from.equipmentId];
     const b = g.equipment[c.to.equipmentId];
     if (!a || !b) continue;

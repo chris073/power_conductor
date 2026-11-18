@@ -11,6 +11,12 @@ PSS/E and ANDES ready: modeling data on every device, and a study-case export (D
 - **Overhead line** equipment (palette › Lines): conductor, phase spacing, length, R/X/B per mile, ratings and zero-sequence data. It exports as a branch.
 - **Typical-value libraries**: cable impedance by size and material (NEC Table 9), ACSR line constants from conductor and spacing (Carson), transformer X/R and %Z by MVA, and default parameter sets for GENROU, GENSAL, GENCLS, SEXS, ESST1A, IEEET1, TGOV1, GAST, IEEEG1, the WECC REGCA1/REECA1/REECC1/REPCA1 set, the wind WTDTA1/WTARA1/WTPTA1/WTTQA1 models and CIM5BL.
 
+- **Study page** (left nav): system MVA base, frequency, cable-collapse thresholds; a **readiness report** (islands without a swing bus, missing or conflicting base kV, transformer kV that does not match its buses, missing study values, zero or negative impedance, duplicate bus numbers, and every typical value used), where each item opens the object on the SLD; the **bus-branch table** (bus number, name, base kV, type, island, member objects); **Save bus numbers** and **Apply typicals**; and **RAW v33 export**.
+- Node-breaker to bus-branch reduction: closed switching devices, buses, CTs and ties merge into study buses; open devices split them; cables with a length become branches (short ones merge). PSS/E bus numbers are sticky across exports.
+- **Bus-number overlay** on the canvas (toolbar › Study overlay) in the Design lens.
+- `npm run study:check`: exports the sample project and runs ANDES power flow on it (`scripts/andes-check.py`, Python venv in `.venv-study`).
+- The sample project gains an overhead line, a capacitor bank, a standby generator and a PV array behind an inverter.
+
 ### Changed
 - Project files move to schema 2 (D-012). Transformer voltage ratio text ("13.8-0.48 kV") becomes numeric HV/LV (and tertiary) winding voltages; older files migrate automatically.
 - Pasting a bus drops its PSS/E bus number so numbers stay unique.

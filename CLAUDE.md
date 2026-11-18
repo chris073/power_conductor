@@ -12,7 +12,17 @@ npm run dev      # http://localhost:5180
 npm test         # Vitest (domain + layout)
 npm run build    # type-check + production build
 npm run lint     # ESLint, including the architecture import boundaries
+npm run study:check   # export the sample to PSS/E RAW/SEQ/DYR and run ANDES on it
 ```
+
+`study:check` needs the Python venv once (gitignored):
+
+```
+py -3 -m venv .venv-study
+.venv-study/Scripts/python -m pip install andes
+```
+
+It writes `study-out/sample.raw|.seq|.dyr`, runs ANDES power flow (and a 2 s flat time-domain run on the DYR) and exits non-zero if either fails. `npx tsx scripts/study-export.ts my.conductor.json` does the same for an exported project file; `--no-check` skips ANDES.
 
 ## Standing instructions
 
@@ -44,6 +54,7 @@ npm run lint     # ESLint, including the architecture import boundaries
 | `src/domain/schemas/` | Property schemas by type and phase |
 | `src/domain/topology.ts` | Electrical nodes (union-find), trace, components, upstream |
 | `src/domain/serialization/` | Project file format + migrations |
+| `src/domain/study/` | Study export: bus-branch reduction, base kV, per unit, readiness, RAW/SEQ/DYR writers, typical-value libraries (D-011) |
 | `src/layout/` | Geometry and orthogonal routing |
 | `src/symbols/Symbol.tsx` | ANSI symbol drawings (`currentColor`) |
 | `src/canvas/` | React Flow canvas, nodes, edges, lens decorations |
@@ -51,6 +62,7 @@ npm run lint     # ESLint, including the architecture import boundaries
 | `src/pages/` | SLD workspace (palette, toolbar, inspector) and other pages |
 | `src/styles/tokens.css` | Theme tokens (Desert light/dark, from Home Conductor) |
 | `src/dev/` | Dev-only tools (500/700 diagram generator) |
+| `scripts/study-export.ts`, `scripts/andes-check.py` | `npm run study:check` (export + ANDES power flow / TDS) |
 | `scripts/perf-cdp.mjs` | Dev-only perf check (headless Chrome over CDP); re-run after canvas changes (D-010) |
 
 ## Working notes

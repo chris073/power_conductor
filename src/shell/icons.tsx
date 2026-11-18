@@ -33,6 +33,7 @@ const PATHS = {
   download: 'M10 3v10M6 9l4 4 4-4M4 16h12',
   upload: 'M10 15V5M6 9l4-4 4 4M4 17h12',
   bolt: 'M11 2 4 11h5l-1 7 7-9h-5z',
+  study: 'M3 16.5h14M5 16.5V9M10 16.5V5M15 16.5v-5M3.5 9h3M8.5 5h3M13.5 11.5h3',
 } as const;
 
 export type IconName = keyof typeof PATHS;

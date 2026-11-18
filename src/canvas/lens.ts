@@ -4,7 +4,7 @@ import { CATALOG } from '../domain/catalog';
 import { missingRequired } from '../domain/model';
 import { findField, schemaFor, type CxStatus } from '../domain/schemas';
 import type { TraceResult } from '../domain/topology';
-import type { Connection, Equipment, Phase, ProjectDoc } from '../domain/types';
+import type { Connection, Equipment, ObjectResult, Phase, ProjectDoc, StudyResults } from '../domain/types';
 import { formatValue, type VoltageUnit } from '../domain/units';
 
 export interface Decoration {
@@ -37,6 +37,9 @@ export interface LensInput {
   /** Energization from all sources (Operations lens). */
   live: TraceResult | null;
   voltageUnit: VoltageUnit;
+  /** Study overlay: PSS/E bus number per drawn bus, and imported results per object. */
+  busNum?: Map<string, number> | null;
+  results?: StudyResults | null;
 }
 
 function make(cls: string, lines: string[], badge: number, flag: boolean): Decoration {
@@ -90,7 +93,19 @@ export function equipmentDecoration(e: Equipment, i: LensInput): Decoration {
       break;
     }
   }
+  const n = i.busNum?.get(e.id);
+  if (n !== undefined) lines.push(`Bus ${n}`);
+  const r = i.results?.objects[e.id];
+  if (r) lines.push(...resultLines(r));
   return make(tr || cls, lines, badge, flag);
+}
+
+/** Short text for imported study results: bus voltage, or branch flow at the from end. */
+export function resultLines(r: ObjectResult): string[] {
+  const out: string[] = [];
+  if (r.vm !== undefined) out.push(`${r.vm.toFixed(3)} pu ∠${(r.va ?? 0).toFixed(1)}°`);
+  if (r.pFrom !== undefined) out.push(`${r.pFrom.toFixed(2)} MW ${(r.qFrom ?? 0).toFixed(2)} Mvar`);
+  return out;
 }
 
 export function connectionDecoration(c: Connection, i: LensInput): Decoration {

@@ -167,3 +167,4 @@
 .results-grid { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; }
 .results-grid dt { color: var(--ink-3); }
 .results-grid dd { margin: 0; font-variant-numeric: tabular-nums; }
+.tb-select { width: auto; height: 28px; padding: 2px 6px; font-size: 12px; margin-left: 6px; }

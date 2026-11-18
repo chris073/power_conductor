@@ -127,3 +127,16 @@ Re-run the script after canvas changes. If a larger diagram is needed later, the
 - `Equipment.typical` / `Connection.typical` are optional and need no migration.
 
 Test: `src/domain/__tests__/migration-v1.test.ts` with the fixture `fixtures/v1-project.json`. Pasting a bus drops its `design.busNum`, so numbers stay unique.
+
+## D-013 RAW v33 choices for PSS/E and ANDES together (2026-11-17)
+
+ANDES 2.0.0 (`andes/io/psse.py`) reads v33 RAW with its own parser. The writer stays inside valid v33 and picks the options both tools read the same way:
+- **Two-winding transformers: CW = 2, CZ = 1, NOMV = 0.** ANDES computes the tap from both winding kV only for CW = 2; for CW = 1 it reads WINDV1 and ignores WINDV2. A non-zero NOMV makes ANDES rescale the impedance by (NOMV / bus kV)², so NOMV stays 0 and R, X are already referred to the bus base.
+- **Three-winding transformers: CW = 1.** ANDES uses WINDV as a per-unit tap for each star branch whatever CW says, so per-unit ratios are the only form both read the same.
+- **Phase shift.** ANG1 = +30° for Δ-Y and Y-Δ units (HV leads LV, ANSI), with VECGRP "Dyn1"/"YNd1". ANDES applies it: the sample's LV buses solve at about −28.9°.
+- **No blank lines** after the three header lines (ANDES indexes `line[0]`). Section ends are written as `0 / END OF … DATA, BEGIN … DATA`. ANDES detects them by the leading `0 `.
+- **Loads.** ANDES folds the ZIP parts into a constant-PQ load at the initial voltage. PSS/E keeps the split.
+- **Owners and zones** are written; ANDES reads areas only.
+- **Utility source.** A generator with MBASE = fault MVA and ZSORCE = 1 pu at the source X/R. It is the island swing unless another unit is flagged.
+
+**Result.** `npm run study:check` exports the sample substation (7 buses, 2 transformers, 5 branches including a 2-mile overhead line, a utility, a genset and a PV inverter). ANDES 2.0.0 power flow converges in 4 Newton iterations (mismatch 9.4e-9).

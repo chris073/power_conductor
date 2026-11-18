@@ -5,11 +5,12 @@ import { useSettings, type ThemeChoice } from '../state/settingsStore';
 import { useUi } from '../state/uiStore';
 import { Icon, type IconName } from './icons';
 
-export type Route = 'projects' | 'sld' | 'revisions' | 'features' | 'claude' | 'settings';
+export type Route = 'projects' | 'sld' | 'study' | 'revisions' | 'features' | 'claude' | 'settings';
 
 const NAV: { route: Route; label: string; icon: IconName; group: string }[] = [
   { route: 'projects', label: 'Projects', icon: 'folder', group: 'Work' },
   { route: 'sld', label: 'SLD', icon: 'sld', group: 'Work' },
+  { route: 'study', label: 'Study', icon: 'study', group: 'Work' },
   { route: 'revisions', label: 'Revisions', icon: 'history', group: 'Conductor' },
   { route: 'features', label: 'Features', icon: 'flag', group: 'Conductor' },
   { route: 'claude', label: 'Claude Instructions', icon: 'doc', group: 'Conductor' },

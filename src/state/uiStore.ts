@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import type { Id, Phase } from '../domain/types';
 
+export type StudyOverlay = 'off' | 'busNum' | 'results';
+
 export type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
 
 export interface Toast { id: number; text: string; kind: 'info' | 'error' }
@@ -19,6 +21,9 @@ interface UiState {
   shortcutsOpen: boolean;
   /** Ask the canvas to center on an object (set by the inspector). */
   focusId: Id | null;
+  /** Study overlay on the canvas: PSS/E bus numbers (Design lens) or imported power-flow results. */
+  studyOverlay: StudyOverlay;
+  setStudyOverlay: (o: StudyOverlay) => void;
   setPhase: (p: Phase) => void;
   setSheet: (id: Id | null) => void;
   select: (ids: Id[]) => void;
@@ -47,6 +52,8 @@ export const useUi = create<UiState>((set, get) => ({
   toasts: [],
   shortcutsOpen: false,
   focusId: null,
+  studyOverlay: 'off',
+  setStudyOverlay: (studyOverlay) => set({ studyOverlay }),
   setPhase: (phase) => set({ phase }),
   setSheet: (sheetId) => set({ sheetId, selection: [] }),
   select: (ids) => { if (!sameIds(ids, get().selection)) set({ selection: ids }); },

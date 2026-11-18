@@ -28,6 +28,7 @@ import { useSettings } from '../state/settingsStore';
 import { useUi } from '../state/uiStore';
 import { buildEdges, buildNodes, Memo, type CableEdge, type CanvasNode, type Override } from './adapters';
 import { OrthoEdge } from './edges/OrthoEdge';
+import { buildStudyCase } from '../domain/study';
 import { connectionDecoration, equipmentDecoration, type Decoration } from './lens';
 import { CloudNode, LineupNode, NoteNode } from './nodes/BoxNodes';
 import { BusNode } from './nodes/BusNode';
@@ -123,13 +124,22 @@ function Canvas({ sheetId }: { sheetId: Id }) {
   const traceResult = useMemo(() => (traceFrom && doc.equipment[traceFrom] ? runTrace(doc, [traceFrom]) : null), [doc, traceFrom]);
   const live = useMemo(() => (phase === 'operations' ? energizedFromSources(doc) : null), [doc, phase]);
 
+  const overlay = useUi((s) => s.studyOverlay);
+  // PSS/E bus numbers on drawn buses (Design lens). The study build runs only while the overlay is on.
+  const busNum = useMemo(() => {
+    if (overlay !== 'busNum' || phase !== 'design') return null;
+    const sc = buildStudyCase(doc);
+    const m = new Map<string, number>();
+    for (const b of sc.buses) for (const id of b.busIds) m.set(id, b.number);
+    return m;
+  }, [doc, overlay, phase]);
   const decorations = useMemo(() => {
     const m = new Map<Id, Decoration>();
-    const input = { doc, phase, trace: traceResult, live, voltageUnit: settings.voltageUnit };
+    const input = { doc, phase, trace: traceResult, live, voltageUnit: settings.voltageUnit, busNum, results: overlay === 'results' ? doc.studyResults : null };
     for (const e of Object.values(doc.equipment)) if (e.sheetId === sheetId) m.set(e.id, equipmentDecoration(e, input));
     for (const c of Object.values(doc.connections)) if (c.sheetId === sheetId) m.set(c.id, connectionDecoration(c, input));
     return m;
-  }, [doc, phase, traceResult, live, settings.voltageUnit, sheetId]);
+  }, [doc, phase, traceResult, live, settings.voltageUnit, sheetId, busNum, overlay]);
 
   const selSet = useMemo(() => new Set(selection), [selection]);
   const nodes = useMemo(
